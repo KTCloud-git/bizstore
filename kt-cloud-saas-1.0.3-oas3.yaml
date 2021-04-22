@@ -1,0 +1,228 @@
+---
+openapi: 3.0.2
+info:
+  title: KT Cloud SaaS 서비스 API
+  version: 1.0.3-oas3
+servers:
+- url: https://연동대상시스템의 URL
+  description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 
+paths:
+  /customers/{mem-sq}:
+    post:
+      tags:
+      - customer-management
+      summary: 서비스 신청, SSO 연동 관련 API.
+      description: token값과 함께 고객정보를 연동대상시스템으로 전달하여 서비스 신청.
+      parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization(권한) 확인을 통한 권한 확인 
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        schema:
+          type: string 
+          format: "{header}.{payload}.{signature}"
+          description: "https://jwt.io/introduction을 따름. Base64Url({header}).Base64Url({payload}).Base64Url(signature), signature는 RSASHA256을 사용하며 Public key는 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnzyis1ZjfNB0bBgKFMSv 입니다."
+      - name: mem-sq
+        in: path
+        description: KT Cloud가 보유하고 있는 고유의 고객 식별자
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/customer-body'
+      responses:
+        "200":
+          description: 고객에게 정상적으로 연동대상시스템의 로그인 페이지를 전달합니다.
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '{"html":{"summary":"고객에게 보여줄 html page","value":"<html>....</html>"}}'
+        "401":
+          description: not_match_authorization = authKey 에러
+        default:
+          description: 예상못한 에러
+      security:
+      - tokenAuth: []
+    delete:
+      tags:
+      - customer-management
+      summary: 고객 탈퇴
+      description: 고객 탈퇴처리를 위해 mem-sq에 해당하는 고객 레코드에 탈퇴일을 추가합니다. (Auth Key 값은 Basic 값 입니다.)
+      parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization(권한) 확인을 통한 권한 확인 
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        schema:
+          type: string 
+          format: "{header}.{payload}.{signature}"
+          description: "https://jwt.io/introduction을 따름. Base64Url({header}).Base64Url({payload}).Base64Url(signature)"
+      - name: mem-sq
+        in: path
+        description: KT Cloud가 보유하고 있는 고유의 고객 식별자
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: M12345
+      responses:
+        "200":
+          description: 유효한 요청에 대한 올바른 응답
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "401":
+          description: not_match_authorization = authKey 에러
+        default:
+          description: 예상못한 에러
+      security:
+      - tokenAuth: []
+  /bill-list/date/{bill-day}:
+    get:
+      tags:
+      - billing-management
+      summary: 날짜별 과금정보 조회
+      description: 연동 시스템에서 보유한 특정 일 곧 {bill-day}까지 과금했을 때의 요금을 회신합니다.
+      parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization(권한) 확인을 통한 권한 확인 
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        schema:
+          type: string 
+          format: "{header}.{payload}.{signature}"
+          description: "https://jwt.io/introduction을 따름. Base64Url({header}).Base64Url({payload}).Base64Url(signature)"
+      - name: bill-day
+        in: path
+        description: 조회하고 싶은 일자를 의미합니다.(해당 일의 요금 정보를 회신. 해당 월 요금 기준으로 일할 계산)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: yyyy-mm-dd
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bills'
+        default:
+          $ref: '#/components/responses'
+      security:
+      - tokenAuth: []
+  /bill-list/customer/{mem-sq}:
+    get:
+      tags:
+      - billing-management
+      summary: 사용자별 과금정보 조회
+      description: 특정 고객에 대한 가입일부터 현재까지의 각 일별로 과금 정보를 회신합니다.
+      parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization(권한) 확인을 통한 권한 확인 
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        schema:
+          type: string 
+          format: "{header}.{payload}.{signature}"
+          description: "https://jwt.io/introduction을 따름. Base64Url({header}).Base64Url({payload}).Base64Url(signature)"
+      - name: mem-sq
+        in: path
+        description: KT Cloud가 보유하고 있는 고유의 고객 식별자
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+      security:
+      - tokenAuth: []
+components:
+  securitySchemes:
+    tokenAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Bills:
+      type: array
+      items:
+        $ref: '#/components/schemas/Bill'
+    Bill:
+      required:
+      - bill-date
+      - license-count
+      - mem-sq
+      - pay-amt
+      properties:
+        mem-sq:
+          type: string
+          format: UTF-8
+        bill-day:
+          type: string
+          format: yyyy-mm-dd
+        license-count:
+          type: string
+        pay-amt:
+          type: integer
+          description: KRW 단위
+          format: int32
+    customer-body:
+      type: object
+      properties:
+        licenseStartDate:
+          type: string
+          description: 라이선스 시작 일 (yyyyMMdd)
+          example: "20201210"
+        licenseEndDate:
+          type: string
+          description: 라이선스 종료 일 (yyyyMMdd)
+          example: "2021030"
+        productId:
+          type: string
+          description: 라이선스 구분
+          example: "1"
+        licenseStatesCd:
+          type: string
+          description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
+          example: "0"
+    inline_response_200:
+      required:
+      - description
+      - success
+      properties:
+        success:
+          description: 성공 실패 여부를 의미한다.
+          example: true or false
+        description:
+          description: 실패 여부의 상세 원인을 표현한다.
+  responses:
+    "200":
+      description: 성공, OK, 유효한 요청에 대한 예상된 응답
+    "201":
+      description: 성공, Created, 자원 생성 완료
+    "202":
+      description: 성공, Accepted, 시간 지연
+    "400":
+      description: 실패, Bad request
+    "401":
+      description: 실패, Unauthorized, 유저 권한 없음
+    "403":
+      description: 실패, Forbidden, 유저 권한 문제
+    "404":
+      description: 실패, Not Found, 찾지 못함.
+    "405":
+      description: 실패, Method not allowed, Request의 endpoint와 resource가 유효하지 않음.
