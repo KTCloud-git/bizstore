@@ -1,0 +1,8 @@
+// {type:sequence}
+// {generate:true}
+// JWT 토큰 생성 관련 Logic 설명
+[KT Cloud Biz 스토어 Web]JWT 규격에 맞는 데이터 Header, Payload, Verify signature(private key로 암호화) 생성>[KT Cloud Biz 스토어 Web]
+[KT Cloud Biz 스토어 Web]API 요청시 Token 전달>[연동 대상 시스템]
+[연동 대상 시스템]수신한 토큰에 대하여 내용 확인 후 Verify signature 복호화(public key로 복호화)>[연동 대상 시스템]
+[연동 대상 시스템]복호화 내용의 발신 시각이 1분 내인지 확인>[연동 대상 시스템]
+[연동 대상 시스템]응답>[KT Cloud Biz 스토어 Web]

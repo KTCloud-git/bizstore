@@ -1,0 +1,6 @@
+// {type:sequence}
+// {generate:true}
+// Daily 빌링 관련 API로 해당 일자의 고객 사용량(라이선스) 그리고 매월 1일부터 해당 일자까지의 일할 계산된 요금 정보
+[KT Cloud Biz 스토어 Web]GET /bill-list/date/{bill-date}>[연동 대상 시스템]
+[연동 대상 시스템]bill-date, 사용량, 고객 식별 정보, 요금 정보       .>[KT Cloud Biz 스토어 Web]
+

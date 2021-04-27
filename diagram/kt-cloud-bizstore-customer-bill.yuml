@@ -1,0 +1,5 @@
+// {type:sequence}
+// {generate:true}
+// 고객의 가입일부터 현재까지의 일별 빌링 관련 API
+[KT Cloud Biz 스토어 Web]GET /bill-list/customer/{mem-sq}>[연동 대상 시스템]
+[연동 대상 시스템]bill-date, 사용량, 고객 식별 정보, 요금 정보       .>[KT Cloud Biz 스토어 Web]
