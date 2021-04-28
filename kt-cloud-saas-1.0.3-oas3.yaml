@@ -7,6 +7,25 @@ servers:
 - url: https://연동대상시스템의 URL
   description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 
 paths:
+  /status:
+    get:
+      tags:
+      - status-management
+      summary: 서비스 상태값 조회
+      description: 고객의 서비스 상태값 조회(구축형일 경우 구축중인지 확인 필요)
+      responses:
+        "200":
+          description: 유효한 요청에 대한 올바른 응답
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+        "401":
+          description: not_match_authorization = authKey 에러
+        default:
+          description: 예상못한 에러
+      security:
+      - tokenAuth: []
   /customers/{mem-sq}:
     post:
       tags:
@@ -164,21 +183,49 @@ components:
     Bill:
       required:
       - bill-date
-      - license-count
       - mem-sq
+      - service-info
+      - license-count
+      - free-period
       - pay-amt
       properties:
         mem-sq:
           type: string
           format: UTF-8
-        bill-day:
+        bill-date:
           type: string
           format: yyyy-mm-dd
+        service-info:
+          type: string
+          description: 해당 서비스 정보로 '서비스유형(납부유형)'형식을 갖춤
+          example: standard(초기 납부제)
+        free-period:
+          type: string
+          description: 시작일~종료일
+          format: yyyymmdd~yyyymmdd
+          example: 20210301~202010501
+        contract-discount-period:
+          type: string
+          description: 시작일~종료일
+          format: yyyymmdd~yyyymmdd
+          example: 20210301~202010501
         license-count:
           type: string
+          description: 사용량
+        usage-pay-amt:
+          type: integer
+          description: license-count 기반 요금 (KRW 단위)
+          format: int32
+        onetime-start:
+          type: string
+          format: yyyy-mm-dd
+        onetime-pay-amt:
+          type: integer
+          description: onetime 기반 요금 (KRW 단위)
+          format: int32
         pay-amt:
           type: integer
-          description: KRW 단위
+          description: license-count + onetime 기반 요금, 전체 요금(KRW 단위)
           format: int32
     customer-body:
       type: object
@@ -209,6 +256,37 @@ components:
           example: true or false
         description:
           description: 실패 여부의 상세 원인을 표현한다.
+    status:
+      required:
+      - mem-sq
+      - reg-date
+      - install-complete-date
+      - status
+      - service-manager
+      - service-engineer
+      properties:
+        mem-sq:
+          description: 고객 식별정보
+          example: M12345
+        reg-date:
+          description: 고객 신청일 
+          format: yyyy-mm-dd
+          example: 2021-04-28
+        install-complete-date:
+          description: 설치 완료일 
+          format: yyyy-mm-dd
+          example: 2021-04-28
+        status:
+          description: 설치진행중 - 설치 완료 / 삭제진행중 - 삭제 완료
+          example: 설치 완료 
+        service-manager:
+          description: 서비스 담당자 정보 
+          example: 홍길동(010-3333-4444,honggildong@kt.com)
+          format: name(010-nnnn-nnnn,name@domain)
+        service-engineer:
+          description: 서비스 엔지니어 정보
+          example: 홍길동(010-3333-4444,honggildong@kt.com)
+          format: name(010-nnnn-nnnn,name@domain)
   responses:
     "200":
       description: 성공, OK, 유효한 요청에 대한 예상된 응답
