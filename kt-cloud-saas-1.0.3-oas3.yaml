@@ -246,6 +246,18 @@ components:
           type: string
           description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
           example: "0"
+        service-info:
+          type: string
+          description: 해당 서비스 정보로 '서비스유형(납부유형)'형식을 갖춤
+          example: standard(초기 납부제)
+        contract-discount-period:
+          type: string
+          description: 시작일~종료일
+          format: yyyymmdd~yyyymmdd
+          example: 20210301~202010501
+        onetime-start:
+          type: string
+          format: yyyy-mm-dd
     inline_response_200:
       required:
       - description
