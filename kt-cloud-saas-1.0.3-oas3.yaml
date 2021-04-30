@@ -1,18 +1,42 @@
 ---
-openapi: 3.0.2
+openapi: 3.0.3
 info:
-  title: KT Cloud SaaS 서비스 API
-  version: 1.0.3-oas3
+  title: KT Cloud Bizstore 서비스 API
+  description: API 인증은 JWT 형식으로 하며, JWT 토큰 생성 및 검증을 위한 상세 명세(Header, Payload, Public Key)는 아래 'JWT 토큰 생성을 위한 문서'를 참조합니다. JWT의 유효시간은 1분입니다. JWT Token내 signautre 부분에 ",포함 Private key는 입력하지 않음. Public key는 별도로 요청해 주세요. 
+  version: 2.1.0
+externalDocs:
+  description: JWT 토큰 생성을 위한 문서
+  url: https://jwt.io/#debugger-io?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoia3QgY2xvdWQgYml6IHN0b3JlIiwiaWF0IjoxNjEzMjM5MDIyfQ.Aj4dRXjzLyobZQTpxOO3p66Dq5mrBPKCb5XtD-gmhxI128la6p_CdKzLI7X2j_eFFRXQL2zf8Q7tZ2NcTJ8Pz7nq1xitp77JsBLCNBjvOqKwEmIf9R3kci2uJinkGj-xiGq3gplBOZ0jeBKv60Lt1nmKZ-LvmFh_Kf3WMTwFDOVlrwPgvXYMK4qyyCRG3JGFTjMQNX7JrNnoUfU9D8lDDsAI21fksmSU_SHEVJnc172VfXOt2UMb4eAcBP3Sk8x6MEwGXQXKp2ltEhh3NNMgY7VaKD7iPEg1--D_9g_7XuVmAqkUhm3ZcAo6dKgdXA9t99xh8TY3cbsY_QEv4dyqbQ&publicKey=-----BEGIN%20PUBLIC%20KEY-----%0AMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnzyis1ZjfNB0bBgKFMSv%0AvkTtwlvBsaJq7S5wA%2BkzeVOVpVWwkWdVha4s38XM%2Fpa%2Fyr47av7%2Bz3VTmvDRyAHc%0AaT92whREFpLv9cj5lTeJSibyr%2FMrm%2FYtjCZVWgaOYIhwrXwKLqPr%2F11inWsAkfIy%0AtvHWTxZYEcXLgAXFuUuaS3uF9gEiNQwzGTU1v0FqkqTBr4B8nW3HCN47XUu0t8Y0%0Ae%2Blf4s4OxQawWD79J9%2F5d3Ry0vbV3Am1FtGJiJvOwRsIfVChDpYStTcHTCMqtvWb%0AV6L11BWkpzGXSW4Hv43qa%2BGSYOD2QU68Mb59oSk2OB%2BBtOLpJofmbGEGgvmwyCI9%0AMwIDAQAB%0A-----END%20PUBLIC%20KEY-----
 servers:
 - url: https://연동대상시스템의 URL
-  description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 
+  description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템의 IP는 하나로 지정하여 통신합니다.
 paths:
-  /status:
+  /status/{mem-sq}:
     get:
       tags:
       - status-management
       summary: 서비스 상태값 조회
       description: 고객의 서비스 상태값 조회(구축형일 경우 구축중인지 확인 필요)
+      parameters:
+      - name: encoded-jwt
+        in: header
+        description: JWT를 통한 권한 확인
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          description: https://jwt.io/introduction을 따름. 상세 내용은 JWT 토큰 생성을 위한 문서 확인
+          format: '{header}.{payload}.{signature}'
+      - name: mem-sq
+        in: path
+        description: KT Cloud가 보유하고 있는 고유의 고객 식별자
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: M12345
       responses:
         "200":
           description: 유효한 요청에 대한 올바른 응답
@@ -33,20 +57,25 @@ paths:
       summary: 서비스 신청, SSO 연동 관련 API.
       description: token값과 함께 고객정보를 연동대상시스템으로 전달하여 서비스 신청.
       parameters:
-      - name: Authorization
+      - name: encoded-jwt
         in: header
-        description: JWT Authorization(권한) 확인을 통한 권한 확인 
-        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        description: JWT를 통한 권한 확인
+        required: false
+        style: simple
+        explode: false
         schema:
-          type: string 
-          format: "{header}.{payload}.{signature}"
-          description: "https://jwt.io/introduction을 따름. Base64Url({header}).Base64Url({payload}).Base64Url(signature), signature는 RSASHA256을 사용하며 Public key는 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnzyis1ZjfNB0bBgKFMSv 입니다."
+          type: string
+          description: https://jwt.io/introduction을 따름. 상세 내용은 JWT 토큰 생성을 위한 문서 확인
+          format: '{header}.{payload}.{signature}'
       - name: mem-sq
         in: path
         description: KT Cloud가 보유하고 있는 고유의 고객 식별자
         required: true
+        style: simple
+        explode: false
         schema:
           type: string
+        example: M12345
       requestBody:
         content:
           application/json:
@@ -54,38 +83,57 @@ paths:
               $ref: '#/components/schemas/customer-body'
       responses:
         "200":
-          description: 고객에게 정상적으로 연동대상시스템의 로그인 페이지를 전달합니다.
+          description: OK. 고객에게 정상적으로 연동대상시스템의 로그인 페이지를 전달합니다.
+          headers:
+            Location:
+              description: 연동대상시스템의 로그인페이지
+              schema:
+                type: string
+                example: 'http://연동대상시스템URL/SSO_URI?Query'
           content:
             text/html:
               schema:
+                description: 고객에게 보여줄 html page
                 type: string
                 example: '{"html":{"summary":"고객에게 보여줄 html page","value":"<html>....</html>"}}'
+        "201":
+          description: Creadted. 서비스 신청 완료된 경우, 고객에게 정상적으로 연동대상시스템의 로그인 페이지를 전달합니다.        
+          headers:
+            Location:
+              description: 연동대상시스템의 로그인페이지
+              schema:
+                type: string
+                example: 'http://연동대상시스템URL/SSO_URI?Query'
+          content:
+            text/html:
+              schema:
+                properties:
+                  Location:
+                    description: 고객에게 보여줄 html page
+                    type: string
+                    example: '{"html":{"summary":"","value":"<html>....</html>"}}'
         "401":
           description: not_match_authorization = authKey 에러
         default:
           description: 예상못한 에러
-      security:
-      - tokenAuth: []
     delete:
       tags:
       - customer-management
       summary: 고객 탈퇴
       description: 고객 탈퇴처리를 위해 mem-sq에 해당하는 고객 레코드에 탈퇴일을 추가합니다. (Auth Key 값은 Basic 값 입니다.)
       parameters:
-      - name: Authorization
+      - name: encoded-jwt
         in: header
-        description: JWT Authorization(권한) 확인을 통한 권한 확인 
-        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        description: JWT를 통한 권한 확인
+        required: true
         schema:
-          type: string 
-          format: "{header}.{payload}.{signature}"
-          description: "https://jwt.io/introduction을 따름. Base64Url({header}).Base64Url({payload}).Base64Url(signature)"
+          type: string
+          description: https://jwt.io/introduction을 따름. 상세 내용은 JWT 토큰 생성을 위한 문서 확인
+          format: '{header}.{payload}.{signature}'
       - name: mem-sq
         in: path
         description: KT Cloud가 보유하고 있는 고유의 고객 식별자
         required: true
-        style: simple
-        explode: false
         schema:
           type: string
         example: M12345
@@ -109,14 +157,14 @@ paths:
       summary: 날짜별 과금정보 조회
       description: 연동 시스템에서 보유한 특정 일 곧 {bill-day}까지 과금했을 때의 요금을 회신합니다.
       parameters:
-      - name: Authorization
+      - name: encoded-jwt
         in: header
-        description: JWT Authorization(권한) 확인을 통한 권한 확인 
-        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        description: JWT를 통한 권한 확인
+        required: false
         schema:
-          type: string 
-          format: "{header}.{payload}.{signature}"
-          description: "https://jwt.io/introduction을 따름. Base64Url({header}).Base64Url({payload}).Base64Url(signature)"
+          type: string
+          description: https://jwt.io/introduction을 따름. 상세 내용은 JWT 토큰 생성을 위한 문서 확인
+          format: '{header}.{payload}.{signature}'
       - name: bill-day
         in: path
         description: 조회하고 싶은 일자를 의미합니다.(해당 일의 요금 정보를 회신. 해당 월 요금 기준으로 일할 계산)
@@ -126,6 +174,7 @@ paths:
         schema:
           type: string
           format: yyyy-mm-dd
+          example: 2021-02-09T00:00:00.000+0000
       responses:
         "200":
           description: OK
@@ -135,8 +184,6 @@ paths:
                 $ref: '#/components/schemas/Bills'
         default:
           $ref: '#/components/responses'
-      security:
-      - tokenAuth: []
   /bill-list/customer/{mem-sq}:
     get:
       tags:
@@ -144,14 +191,16 @@ paths:
       summary: 사용자별 과금정보 조회
       description: 특정 고객에 대한 가입일부터 현재까지의 각 일별로 과금 정보를 회신합니다.
       parameters:
-      - name: Authorization
+      - name: encoded-jwt
         in: header
-        description: JWT Authorization(권한) 확인을 통한 권한 확인 
-        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        description: JWT를 통한 권한 확인
+        required: false
+        style: simple
+        explode: false
         schema:
-          type: string 
-          format: "{header}.{payload}.{signature}"
-          description: "https://jwt.io/introduction을 따름. Base64Url({header}).Base64Url({payload}).Base64Url(signature)"
+          type: string
+          description: https://jwt.io/introduction을 따름. Base64Url({header}).Base64Url({payload}).Base64Url(signature)
+          format: '{header}.{payload}.{signature}'
       - name: mem-sq
         in: path
         description: KT Cloud가 보유하고 있는 고유의 고객 식별자
@@ -170,11 +219,6 @@ paths:
       security:
       - tokenAuth: []
 components:
-  securitySchemes:
-    tokenAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
   schemas:
     Bills:
       type: array
@@ -183,10 +227,10 @@ components:
     Bill:
       required:
       - bill-date
-      - mem-sq
       - service-info
       - license-count
       - free-period
+      - mem-sq
       - pay-amt
       properties:
         mem-sq:
@@ -230,26 +274,18 @@ components:
     customer-body:
       type: object
       properties:
-        licenseStartDate:
-          type: string
-          description: 라이선스 시작 일 (yyyyMMdd)
-          example: "20201210"
-        licenseEndDate:
-          type: string
-          description: 라이선스 종료 일 (yyyyMMdd)
-          example: "2021030"
-        productId:
-          type: string
-          description: 라이선스 구분
-          example: "1"
-        licenseStatesCd:
-          type: string
-          description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
-          example: "0"
         service-info:
-          type: string
-          description: 해당 서비스 정보로 '서비스유형(납부유형)'형식을 갖춤
-          example: standard(초기 납부제)
+          type: integer
+          description: 해당 서비스 정보로 '서비스유형(납부유형)'을 코드화한 값
+          example: 1
+        onetime-type:
+          type: integer
+          description: 도입비 분할 여부를 코드화한 값
+          example: 1
+        contract-period:
+          type: integer
+          description: 약정기간 구분 코드
+          example: 1
         contract-discount-period:
           type: string
           description: 시작일~종료일
@@ -258,6 +294,22 @@ components:
         onetime-start:
           type: string
           format: yyyy-mm-dd
+        license-start-date:
+          type: string
+          description: 라이선스 시작 일 (yyyyMMdd)
+          example: "20201210"
+        license-end-date:
+          type: string
+          description: 라이선스 종료 일 (yyyyMMdd)
+          example: "2021030"
+        product-id:
+          type: string
+          description: 라이선스 구분(무료 = 0, 유료 요금제 A = 1, 유료 요금제 B = 2)
+          example: "1"
+        license-states-cd:
+          type: string
+          description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
+          example: "0"
     inline_response_200:
       required:
       - description
@@ -316,3 +368,10 @@ components:
       description: 실패, Not Found, 찾지 못함.
     "405":
       description: 실패, Method not allowed, Request의 endpoint와 resource가 유효하지 않음.
+    "406":
+      description: 실패, 무료체험 고객
+  securitySchemes:
+    tokenAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
