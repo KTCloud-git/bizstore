@@ -21,6 +21,8 @@
   - 서비스 신청 및 SSO : [kt-cloud-bizstore-register-sso.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-register-sso.svg)
   - 서비스 탈퇴 : [kt-cloud-bizstore-resign.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-resign.svg)
   - 과금정보 요청 : [kt-cloud-bizstore-customer-bill.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-daily-bill.svg)
+  - 상태확인 요청 : [kt-cloud-bizstore-check-status.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-check-status.svg)
+    - 상태확인 요청 API를 통해 관리포탈에서 실시간 확인 가능
 
 
 ## 저자
