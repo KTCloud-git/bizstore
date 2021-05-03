@@ -264,7 +264,7 @@ components:
       properties:
         service-info:
           type: integer
-          description: 해당 서비스 정보로 '서비스유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
+          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
           example: 2
           enum:
           - 2
@@ -290,12 +290,8 @@ components:
           example: 20210301~202010501
         license-start-date:
           type: string
-          description: 라이선스 시작 일 (yyyyMMdd)
+          description: Bizstore 상품신청 일자, 라이선스 시작 일 (yyyyMMdd)
           example: "20201210"
-        product-id:
-          type: string
-          description: 라이선스 구분(무료 = 0, 유료 요금제 A = 1, 유료 요금제 B = 2)
-          example: "1"
         license-states-cd:
           type: string
           description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
@@ -335,8 +331,9 @@ components:
           format: yyyy-mm-dd
           example: 2021-04-28
         status:
-          description: 설치진행중 - 설치 완료 / 삭제진행중 - 삭제 완료
-          example: 설치 완료 
+          type: integer
+          description: 1(설치진행중 - 설치 완료) / 0(삭제진행중 - 삭제 완료)
+          example: 1
         service-manager:
           description: 서비스 담당자 정보 
           example: 홍길동(010-3333-4444,honggildong@kt.com)
