@@ -228,18 +228,18 @@ components:
           format: yyyy-mm-dd
         service-info:
           type: string
-          description: 해당 서비스 정보로 '서비스유형(납부유형)'형식을 갖춤
-          example: standard(초기 납부제)
+          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
+          example: "2"
         free-period:
           type: string
           description: 시작일~종료일
           format: yyyymmdd~yyyymmdd
-          example: 20210301~202010501
+          example: "20210301~202010501"
         contract-discount-period:
           type: string
           description: 시작일~종료일
           format: yyyymmdd~yyyymmdd
-          example: 20210301~202010501
+          example: "20210301~202010501"
         license-count:
           type: string
           description: 사용량
