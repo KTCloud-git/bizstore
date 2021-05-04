@@ -263,26 +263,26 @@ components:
       type: object
       properties:
         service-info:
-          type: integer
+          type: string
           description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
-          example: 2
+          example: "2"
           enum:
           - 2
           - 3
           - 4 
           - 5
         onetime-type:
-          type: integer
+          type: string
           description: 도입비 분할 여부를 코드화한 값(0=별도문의, 1=도입비 분할납부, 2=도입비 초기납부)
-          example: 1
+          example: "1"
           enum:
           - 0
           - 1
           - 2
         contract-period:
-          type: integer
+          type: string
           description: 약정기간 구분 코드(0=무약정, n=n년 약정)
-          example: 1
+          example: "1"
         contract-discount-period:
           type: string
           description: 약정할인 기간(시작일~종료일)
@@ -320,20 +320,20 @@ components:
           example: M12345
         license-start-date:
           description: 고객 신청일(kt cloud bizstore 신청기준)
-          format: yyyy-mm-dd
-          example: 2021-04-28
+          format: yyyymmdd
+          example: 20210428
         reg-date:
           description: 고객 신청일(비즈플레이 가입기준)
-          format: yyyy-mm-dd
-          example: 2021-04-28
+          format: yyyymmdd
+          example: 20210428
         install-complete-date:
           description: 설치 완료일.
-          format: yyyy-mm-dd
-          example: 2021-04-28
+          format: yyyymmdd
+          example: 20210428 (설치 진행 중일 땐 99999999 (기본값))
         status:
-          type: integer
-          description: 1(설치진행중 - 설치 완료) / 0(삭제진행중 - 삭제 완료)
-          example: 1
+          type: string
+          description: 0(설치진행중) / 1(설치 완료) / 98(삭제진행중) / (삭제 완료 - delete되서 값 없으면 99로 리턴)
+          example: "1"
         service-manager:
           description: 서비스 담당자 정보 
           example: 홍길동(010-3333-4444,honggildong@kt.com)
