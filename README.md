@@ -12,6 +12,8 @@
 
 - API Document의 기본 규격은 Open api입니다
 
+- Bizstore 연동 시, **SSO Key**는 **kt Cloud 포탈의 MEM-SQ**로 지정되어 있습니다.
+
 ## 문서 구성 내역
 
 - API Document: [kt-cloud-biz-store-2.0.0.yaml](https://github.com/KTCloud-git/bizstore/blob/main/kt-cloud-saas-1.0.3-oas3.yaml) 또는 [Swagger UI](https://app.swaggerhub.com/apis-docs/KTCloud-git/bizstore/2.1.2)로 보기
