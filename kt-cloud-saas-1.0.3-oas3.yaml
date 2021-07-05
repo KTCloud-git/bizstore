@@ -271,14 +271,31 @@ components:
           - 3
           - 4 
           - 5
+        common-volume-type:
+          type: String
+          description: 사용자가 추가한 공용 용량 크기 값
+          example: "200"
+        num-of-common-volume:
+          type: String
+          description: 사용자가 추가한 공용 용량 개수
+          example: "1"
+        email-volume-type:
+          type: String
+          description: 사용자가 추가한 전자메일 용량 크기 값
+          example: "200"
+        num-of-email-volume:
+          type: String
+          description: 사용자가 추가한 전자메일 용량 개수
+          example: "1"
         onetime-type:
           type: string
-          description: 도입비 분할 여부를 코드화한 값(0=별도문의, 1=도입비 분할납부, 2=도입비 초기납부)
+          description: 도입비 분할 여부를 코드화한 값(0=도입비 없음, 1=도입비 분할납부, 2=도입비 초기납부, 3=도입비 별도협의)
           example: "1"
           enum:
           - 0
           - 1
           - 2
+          - 3
         contract-period:
           type: string
           description: 약정기간 구분 코드(0=무약정, n=n년 약정)
