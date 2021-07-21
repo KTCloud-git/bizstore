@@ -28,59 +28,42 @@ paths:
       tags:
       - customer-management
       summary: 서비스 신청, SSO 연동 관련 API.
-      description: token값과 함께 고객정보를 연동대상시스템으로 전달하여 서비스 신청.
+      description: 고객정보를 연동대상시스템으로 전달하여 서비스 신청.
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/customer-body'
       responses:
-        "200":
-          description: OK. 고객에게 정상적으로 연동대상시스템의 로그인 페이지를 전달합니다.
+        "302":
+          description: Redirect
           headers:
             Location:
               description: 연동대상시스템의 로그인페이지
               schema:
                 type: string
+                format: uri
                 example: 'http://연동대상시스템URL/SSO_URI?Query'
-          content:
-            text/html:
-              schema:
-                description: 고객에게 보여줄 html page
-                type: string
-                example: '{"html":{"summary":"고객에게 보여줄 html page","value":"<html>....</html>"}}'
-        "201":
-          description: Creadted. 서비스 신청 완료된 경우, 고객에게 정상적으로 연동대상시스템의 로그인 페이지를 전달합니다.        
-          headers:
-            Location:
-              description: 연동대상시스템의 로그인페이지
-              schema:
-                type: string
-                example: 'http://연동대상시스템URL/SSO_URI?Query'
-          content:
-            text/html:
-              schema:
-                properties:
-                  Location:
-                    description: 고객에게 보여줄 html page
-                    type: string
-                    example: '{"html":{"summary":"","value":"<html>....</html>"}}'
+        default:
+          $ref : '#/components/responses'
     delete:
       tags:
       - customer-management
       summary: 고객 탈퇴
-      description: 고객 탈퇴처리를 위해 mem-sq에 해당하는 고객 레코드에 탈퇴일을 추가합니다. (Auth Key 값은 Basic 값 입니다.)
+      description: 고객 탈퇴처리를 위해 mem-sq에 해당하는 고객 레코드에 탈퇴일을 추가합니다. 
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              required:
+                - "email"
+              properties:
+                "email" :
+                  type: string
+                  example : test@kt.com
       responses:
-        "200":
-          description: 유효한 요청에 대한 올바른 응답
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_200'
-        "401":
-          description: not_match_authorization = authKey 에러
         default:
-          description: 예상못한 에러
+          $ref : '#/components/responses'
   /bill-list/date/{bill-day}:
     get:
       tags:
@@ -104,12 +87,22 @@ paths:
                 $ref: '#/components/schemas/Bills'
         default:
           $ref: '#/components/responses'
-  /bill-list/customer/{mem-sq}:
+  /bill-list/customer/:
     get:
       tags:
       - billing-management
       summary: 사용자별 과금정보 조회
       description: 특정 고객에 대한 가입일부터 현재까지의 각 일별로 과금 정보를 회신합니다.
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              required:
+                - "email"
+              properties:
+                "email" :
+                  type: string
+                  example : test@kt.com
       responses:
         "200":
           description: OK
@@ -117,8 +110,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Bill'
-      security:
-      - tokenAuth: []
+        default:
+          $ref: '#/components/responses'
 components:
   schemas:
     Bills:
@@ -169,10 +162,6 @@ components:
           type: integer
           description: onetime type과 install-complete-date 기반으로 계산된 도입비 (KRW 단위)
           format: int32
-        pay-amt:
-          type: integer
-          description: license-count + onetime-pay-amt 요금, 전체 요금(KRW 단위)
-          format: int32
     customer-body:
       type: object
       properties:
@@ -184,33 +173,17 @@ components:
           type: string
           description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
           example: "2"
-          enum:
-          - 2
-          - 3
-          - 4 
-          - 5
-        onetime-type:
+          enum: [2,3,4,5]
+        contract-discount-percentage:
           type: string
-          description: 도입비 분할 여부를 코드화한 값(0=별도문의, 1=도입비 분할납부, 2=도입비 초기납부)
-          example: "1"
-          enum:
-          - 0
-          - 1
-          - 2
-        contract-period:
-          type: string
-          description: 약정기간 구분 코드(0=무약정, n=n년 약정)
-          example: "1"
+          description: 약정할인율(%)
+          example: 10
         contract-discount-period:
           type: string
           description: 약정할인 기간(시작일~종료일)
           format: yyyymmdd~yyyymmdd
           example: 20210301~202010501
-        license-start-date:
-          type: string
-          description: Bizstore 상품신청 일자, 라이선스 시작 일 (yyyyMMdd)
-          example: "20201210"
-        license-states-cd:
+        customer-status:
           type: string
           description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
           example: "0"
@@ -268,7 +241,7 @@ components:
     "202":
       description: 성공, Accepted, 시간 지연
     "400":
-      description: 실패, Bad request
+      description: 실패, Bad request, 상세한 실패 원인 회신 할 것.
     "401":
       description: 실패, Unauthorized, 유저 권한 없음
     "403":
