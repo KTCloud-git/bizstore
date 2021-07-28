@@ -121,6 +121,14 @@ components:
           type: string
           description: 고객식별 정보 
           example: "M12345"
+        mem-id:
+          type: string 
+          description: 고객 E-mail 정보 
+          example: x@x.com 
+        mem-phone-num:
+          type: string 
+          description: 고객 전화 번호
+          example: 111-111-2222
         license-info:
           type: string
           description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
