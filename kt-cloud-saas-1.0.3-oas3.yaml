@@ -27,8 +27,8 @@ paths:
     post:
       tags:
       - customer-management
-      summary: 서비스 신청, SSO 연동 관련 API.
-      description: 고객정보를 연동대상시스템으로 전달하여 서비스 신청.
+      summary: 서비스 신청 및 SSO
+      description: 고객정보를 연동대상시스템으로 전달하여 서비스 신청. 이미 신청된 고객이면 SSO로그인 처리 
       requestBody:
         content:
           application/json:
@@ -56,11 +56,11 @@ paths:
           "application/json":
             schema:
               required:
-                - "email"
+                - "mem-sq"
               properties:
-                "email" :
+                "mem-sq" :
                   type: string
-                  example : test@kt.com
+                  example : M12345
       responses:
         default:
           $ref : '#/components/responses'
@@ -77,7 +77,7 @@ paths:
         required: true
         schema:
           type: string
-          format: yyyy-mm-dd
+          format: yyyymmdd
       responses:
         "200":
           description: OK
@@ -114,6 +114,31 @@ paths:
           $ref: '#/components/responses'
 components:
   schemas:
+    customer-body:
+     type: object
+     properties:
+        mem-sq:
+          type: string
+          description: 고객식별 정보 
+          example: "M12345"
+        license-info:
+          type: string
+          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
+          example: "2"
+          enum: [2,3,4,5]
+        contract-discount-period:
+          type: string
+          description: 약정할인 기간(시작일~종료일)
+          format: yyyymmdd~yyyymmdd
+          example: 20210301~202010501
+        contract-discount-percentage:
+          type: string
+          description: 약정할인율(%)
+          example: 10
+        license-states-cd:
+          type: string
+          description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
+          example: "0"
     Bills:
       type: array
       items:
@@ -122,9 +147,6 @@ components:
       required:
       - mem-sq
       - bill-date
-      - service-info
-      - free-period
-      - license-count
       - pay-amt
       properties:
         mem-sq:
@@ -132,61 +154,10 @@ components:
           format: UTF-8
         bill-date:
           type: string
-          format: yyyy-mm-dd
-        service-info:
+          format: yyyymmdd
+        pay-amt:
           type: string
-          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
-          example: "2"
-        free-period:
-          type: string
-          description: 시작일~종료일
-          format: yyyymmdd~yyyymmdd
-          example: "20210301~202010501"
-        contract-discount-period:
-          type: string
-          description: 시작일~종료일
-          format: yyyymmdd~yyyymmdd
-          example: "20210301~202010501"
-        license-count:
-          type: string
-          description: 사용량
-        usage-pay-amt:
-          type: integer
-          description: license-count 기반 요금 (KRW 단위)
-          format: int32
-        install-complete-date: 
-          type: string
-          format: yyyy-mm-dd
-          description: 컨설팅을 통한 설치 완료일
-        onetime-pay-amt:
-          type: integer
-          description: onetime type과 install-complete-date 기반으로 계산된 도입비 (KRW 단위)
-          format: int32
-    customer-body:
-      type: object
-      properties:
-        mem-sq:
-          type: string
-          description: 고객식별 정보 
-          example: "M12345"
-        service-info:
-          type: string
-          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
-          example: "2"
-          enum: [2,3,4,5]
-        contract-discount-percentage:
-          type: string
-          description: 약정할인율(%)
-          example: 10
-        contract-discount-period:
-          type: string
-          description: 약정할인 기간(시작일~종료일)
-          format: yyyymmdd~yyyymmdd
-          example: 20210301~202010501
-        customer-status:
-          type: string
-          description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
-          example: "0"
+          description: 1일부터 yyyymmdd까지 사용했을 때의 요금   
     inline_response_200:
       required:
       - description
@@ -200,31 +171,38 @@ components:
     status:
       required:
       - mem-sq
-      - reg-date
+      - free-period
+      - license-info
+      - license-count
+      - license-start-date
+      - install-status
       - install-complete-date
-      - status
       - service-manager
       - service-engineer
       properties:
         mem-sq:
           description: 고객 식별정보
           example: M12345
+        free-period:
+          description: 무료 사용 기간
+          example: yyyymmdd ~ yyyymmdd
+        license-info:
+          description: 사용자가 사용하는 요금제 정보 (Basic = 0, Preminum = 1)
+          example: 0
+        license-count:
+          description: 사용자 수 
+          example: 50
         license-start-date:
           description: 고객 신청일(kt cloud bizstore 신청기준)
           format: yyyymmdd
           example: 20210428
-        reg-date:
-          description: 고객 신청일(비즈플레이 가입기준)
-          format: yyyymmdd
-          example: 20210428
+        install-status:
+          description: 설치 상태 (설치진행 중 = 0, 설치 완료 = 1, 삭제 진행 중 = 2, 삭제 완료 = 3)
+          example: 0
         install-complete-date:
           description: 설치 완료일.
           format: yyyymmdd
           example: 20210428 (설치 진행 중일 땐 99999999 (기본값))
-        status:
-          type: string
-          description: 0(설치진행중) / 1(설치 완료) / 98(삭제진행중) / (삭제 완료 - delete되서 값 없으면 401 코드 또는 "99" 값으로 리턴)
-          example: "1"
         service-manager:
           description: 서비스 담당자 정보 
           example: 홍길동(010-3333-4444,honggildong@kt.com)
