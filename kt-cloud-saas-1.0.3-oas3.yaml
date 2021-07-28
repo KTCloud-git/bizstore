@@ -2,11 +2,11 @@
 openapi: 3.0.3
 info:
   title: KT Cloud Bizstore 서비스 API
-  description: SSL 인증으로 진행합니다. 
+  description: SSL 인증으로 진행합니다. SSL Client 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템의 IP는 하나로 지정하여 통신합니다. 
   version: 3.0.0
 servers:
 - url: https://연동대상시스템의 URL
-  description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템의 IP는 하나로 지정하여 통신합니다.
+  description: URL은 SSL Client 인증서와 같이 사전에 KT로 공유되어야 합니다.
 paths:
   /status/:
     get:
