@@ -39,11 +39,11 @@ paths:
           description: Redirect
           headers:
             Location:
-              description: 연동대상시스템의 로그인페이지
+              description: 앞으로 고객이 사용할 VDI 관리자 
               schema:
                 type: string
                 format: uri
-                example: 'http://연동대상시스템URL/SSO_URI?Query'
+                example: 'randomly.ktvdi.co.kr'
         default:
           $ref : '#/components/responses'
     delete:
@@ -120,73 +120,47 @@ components:
         $ref: '#/components/schemas/Bill'
     Bill:
       required:
-      - mem-sq
       - bill-date
+      - e-mail
       - service-info
       - free-period
       - license-count
       - pay-amt
       properties:
-        mem-sq:
-          type: string
-          format: UTF-8
         bill-date:
           type: string
           format: yyyy-mm-dd
-        service-info:
+        e-mail:
           type: string
-          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
-          example: "2"
-        free-period:
+          example: honggildong@kt.com
+        vm-status:
+          type: array
+          items:
+            $ref: '#/components/schemas/VMS'
+    VMS:
+      type: object
+      properties:
+        vm-name:
           type: string
-          description: 시작일~종료일
-          format: yyyymmdd~yyyymmdd
-          example: "20210301~202010501"
-        contract-discount-period:
-          type: string
-          description: 시작일~종료일
-          format: yyyymmdd~yyyymmdd
-          example: "20210301~202010501"
-        license-count:
-          type: string
-          description: 사용량
-        usage-pay-amt:
-          type: integer
-          description: license-count 기반 요금 (KRW 단위)
-          format: int32
-        install-complete-date: 
-          type: string
-          format: yyyy-mm-dd
-          description: 컨설팅을 통한 설치 완료일
-        onetime-pay-amt:
-          type: integer
-          description: onetime type과 install-complete-date 기반으로 계산된 도입비 (KRW 단위)
-          format: int32
+          example: "NC0101"
+        usage-time:
+          type: integer 
+          example: 123432
     customer-body:
       type: object
       properties:
-        mem-sq:
+        e-mail:
           type: string
           description: 고객식별 정보 
-          example: "M12345"
-        service-info:
+          example: "honggildong@kt.com"
+       business-name:
           type: string
-          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
-          example: "2"
-          enum: [2,3,4,5]
-        contract-discount-percentage:
-          type: string
-          description: 약정할인율(%)
-          example: 10
-        contract-discount-period:
-          type: string
-          description: 약정할인 기간(시작일~종료일)
-          format: yyyymmdd~yyyymmdd
-          example: 20210301~202010501
-        customer-status:
-          type: string
-          description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
-          example: "0"
+          description: 사업자 이름
+          example: "삼성"
+       business-num:
+          type: string 
+          description: 사업자 번호 
+          example: "123-345-2345"
     inline_response_200:
       required:
       - description
