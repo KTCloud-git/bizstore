@@ -12,7 +12,7 @@
 
 - API Document의 기본 규격은 Open api입니다
 
-- Bizstore 연동 시, **SSO Key**는 **kt Cloud 포탈의 MEM-SQ**로 지정되어 있습니다.
+- Bizstore 연동 시, **Primary Key**는 **KT Cloud 포탈의 E-mail**로 지정되어 있습니다.
 
 ## 문서 구성 내역
 
