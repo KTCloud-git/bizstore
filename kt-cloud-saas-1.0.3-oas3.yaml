@@ -35,22 +35,13 @@ paths:
             schema:
               $ref: '#/components/schemas/customer-body'
       responses:
-        "302":
-          description: Redirect
-          headers:
-            Location:
-              description: 연동대상시스템의 로그인페이지
-              schema:
-                type: string
-                format: uri
-                example: 'http://연동대상시스템URL/SSO_URI?Query'
         default:
           $ref : '#/components/responses'
     delete:
       tags:
       - customer-management
       summary: 고객 탈퇴
-      description: 고객 탈퇴처리를 위해 mem-sq에 해당하는 고객 레코드에 탈퇴일을 추가합니다. 
+      description: 고객 탈퇴처리를 위해 e-mail에 해당하는 고객 레코드에 탈퇴일을 추가합니다. 
       requestBody:
         content:
           "application/json":
@@ -77,7 +68,7 @@ paths:
         required: true
         schema:
           type: string
-          format: yyyy-mm-dd
+          format: yyyymmdd
       responses:
         "200":
           description: OK
@@ -120,16 +111,16 @@ components:
         $ref: '#/components/schemas/Bill'
     Bill:
       required:
-      - mem-sq
+      - e-mail
       - bill-date
       - service-info
       - free-period
       - license-count
       - pay-amt
       properties:
-        mem-sq:
+        e-mail:
           type: string
-          format: UTF-8
+          example: honggildong@kt.com
         bill-date:
           type: string
           format: yyyy-mm-dd
@@ -165,10 +156,10 @@ components:
     customer-body:
       type: object
       properties:
-        mem-sq:
+        e-mail:
           type: string
           description: 고객식별 정보 
-          example: "M12345"
+          example: "honggildong@kt.com"
         service-info:
           type: string
           description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
@@ -199,16 +190,16 @@ components:
           description: 실패 여부의 상세 원인을 표현한다.
     status:
       required:
-      - mem-sq
+      - e-mail
       - reg-date
       - install-complete-date
       - status
       - service-manager
       - service-engineer
       properties:
-        mem-sq:
+        e-mail:
           description: 고객 식별정보
-          example: M12345
+          example: honggildong@kt.com
         license-start-date:
           description: 고객 신청일(kt cloud bizstore 신청기준)
           format: yyyymmdd
