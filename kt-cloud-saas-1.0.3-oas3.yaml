@@ -50,7 +50,7 @@ paths:
       tags:
       - customer-management
       summary: 고객 탈퇴
-      description: 고객 탈퇴처리를 위해 mem-sq에 해당하는 고객 레코드에 탈퇴일을 추가합니다. 
+      description: 고객 탈퇴처리를 위해 email에 해당하는 고객 레코드에 탈퇴일을 추가합니다. 
       requestBody:
         content:
           "application/json":
@@ -173,16 +173,17 @@ components:
           description: 실패 여부의 상세 원인을 표현한다.
     status:
       required:
-      - mem-sq
+      - email
       - reg-date
       - install-complete-date
       - status
       - service-manager
       - service-engineer
       properties:
-        mem-sq:
+        email:
+          type: string
           description: 고객 식별정보
-          example: M12345
+          example: "honggildong@kt.com"
         license-start-date:
           description: 고객 신청일(kt cloud bizstore 신청기준)
           format: yyyymmdd
