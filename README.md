@@ -2,7 +2,7 @@
 
 이 문서는 KT Cloud Biz 스토어<https://cloud.kt.com/bizstore>와의 연동을 위해 사용합니다
 
-연동 대상은 KT Cloud Biz 스토어의 Web server와 API server입니다
+KT Cloud Biz 스토어의 API server와 연동을 위해 솔루션 업체에서 만들어야하는 API를 정의합니다.
 
 ## 알아두기
 
