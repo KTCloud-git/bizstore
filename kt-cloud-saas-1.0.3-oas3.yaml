@@ -1,9 +1,9 @@
 ---
 openapi: 3.0.3
 info:
-  title: KT Cloud Bizstore 서비스 API
+  title: KT Cloud Bizstore KT DaaS 서비스 API
   description: SSL 인증으로 진행합니다. 
-  version: 3.0.0
+  version: 3.0.1
 servers:
 - url: https://연동대상시스템의 URL
   description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템의 IP는 하나로 지정하여 통신합니다.
@@ -20,7 +20,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/status'
+                $ref: '#/components/schemas/Status'
         default:
           description: 예상못한 에러
   /customers/:
@@ -33,13 +33,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customer-body'
+              $ref: '#/components/schemas/Customer'
       responses:
         "302":
           description: Redirect
           headers:
             Location:
-              description: 앞으로 고객이 사용할 VDI 관리자 
+              description: 앞으로 고객이 사용할 VDI 관리자 접속 URL, Example의 randomly는 변경 가능함.
               schema:
                 type: string
                 format: uri
@@ -50,7 +50,7 @@ paths:
       tags:
       - customer-management
       summary: 고객 탈퇴
-      description: 고객 탈퇴처리를 위해 email에 해당하는 고객 레코드에 탈퇴일을 추가합니다. 
+      description: 고객 탈퇴처리를 위해 email에 해당하는 고객을 전달합니다.
       requestBody:
         content:
           "application/json":
@@ -64,20 +64,20 @@ paths:
       responses:
         default:
           $ref : '#/components/responses'
-  /bill-list/date/{bill-day}:
+  /bill-list/date/{bill-date}:
     get:
       tags:
       - billing-management
-      summary: 날짜별 과금정보 조회
-      description: 연동 시스템에서 보유한 특정 일 곧 {bill-day}까지 과금했을 때의 요금을 회신합니다.
+      summary: 날짜별 사용정보 조회
+      description: "bill-data까지의 사용량 정보를 얻기 위한 API 입니다."
       parameters:
-      - name: bill-day
+      - name: bill-date
         in: path
-        description: 조회하고 싶은 일자를 의미합니다.(해당 일의 요금 정보를 회신. 해당 월 요금 기준으로 일할 계산)
+        description: 조회하고 싶은 일자를 의미합니다.(해당 일의 사용 정보 회신. 해당 월 요금 기준으로 일할 계산)
         required: true
         schema:
           type: string
-          format: yyyy-mm-dd
+          format: yyyymmdd
       responses:
         "200":
           description: OK
@@ -114,6 +114,21 @@ paths:
           $ref: '#/components/responses'
 components:
   schemas:
+    Customer:
+      type: object
+      properties:
+        e-mail:
+          type: string
+          description: 고객식별 정보 
+          example: "honggildong@kt.com"
+        business-name:
+            type: string
+            description: 사업자 이름
+            example: "삼성"
+        business-num:
+            type: string 
+            description: 사업자 번호 
+            example: "123-345-2345"
     Bills:
       type: array
       items:
@@ -122,10 +137,7 @@ components:
       required:
       - bill-date
       - e-mail
-      - service-info
-      - free-period
-      - license-count
-      - pay-amt
+      - vm-status
       properties:
         bill-date:
           type: string
@@ -136,8 +148,8 @@ components:
         vm-status:
           type: array
           items:
-            $ref: '#/components/schemas/VMS'
-    VMS:
+            $ref: '#/components/schemas/VMs'
+    VMs:
       type: object
       properties:
         vm-name:
@@ -145,37 +157,12 @@ components:
           example: "NC0101"
         usage-time:
           type: integer 
+          description: 초단위 누적 요금
           example: 123432
-    customer-body:
-      type: object
-      properties:
-        e-mail:
-          type: string
-          description: 고객식별 정보 
-          example: "honggildong@kt.com"
-       business-name:
-          type: string
-          description: 사업자 이름
-          example: "삼성"
-       business-num:
-          type: string 
-          description: 사업자 번호 
-          example: "123-345-2345"
-    inline_response_200:
-      required:
-      - description
-      - success
-      properties:
-        success:
-          description: 성공 실패 여부를 의미한다.
-          example: true or false
-        description:
-          description: 실패 여부의 상세 원인을 표현한다.
-    status:
+    Status:
       required:
       - email
       - reg-date
-      - install-complete-date
       - status
       - service-manager
       - service-engineer
@@ -184,22 +171,14 @@ components:
           type: string
           description: 고객 식별정보
           example: "honggildong@kt.com"
-        license-start-date:
-          description: 고객 신청일(kt cloud bizstore 신청기준)
-          format: yyyymmdd
-          example: 20210428
         reg-date:
           description: 고객 신청일(비즈플레이 가입기준)
           format: yyyymmdd
           example: 20210428
-        install-complete-date:
-          description: 설치 완료일.
-          format: yyyymmdd
-          example: 20210428 (설치 진행 중일 땐 99999999 (기본값))
         status:
           type: string
-          description: 0(설치진행중) / 1(설치 완료) / 98(삭제진행중) / (삭제 완료 - delete되서 값 없으면 401 코드 또는 "99" 값으로 리턴)
-          example: "1"
+          description: 현재 사용 여부 회신
+          example: "사용 중"
         service-manager:
           description: 서비스 담당자 정보 
           example: 홍길동(010-3333-4444,honggildong@kt.com)
