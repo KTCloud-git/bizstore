@@ -178,7 +178,7 @@ components:
         status:
           type: string
           description: 현재 사용 여부 회신
-          example: "사용 중"
+          example: "설치 중","사용 중","삭제 진행 중","삭제 완료 중"
         service-manager:
           description: 서비스 담당자 정보 
           example: 홍길동(010-3333-4444,honggildong@kt.com)
