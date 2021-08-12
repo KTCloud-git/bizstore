@@ -117,7 +117,7 @@ components:
     Customer:
       type: object
       properties:
-        e-mail:
+        email:
           type: string
           description: 고객식별 정보 
           example: "honggildong@kt.com"
@@ -136,13 +136,13 @@ components:
     Bill:
       required:
       - bill-date
-      - e-mail
+      - email
       - vm-status
       properties:
         bill-date:
           type: string
           format: yyyy-mm-dd
-        e-mail:
+        email:
           type: string
           example: honggildong@kt.com
         vm-status:
