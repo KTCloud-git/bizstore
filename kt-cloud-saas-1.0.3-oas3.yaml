@@ -35,15 +35,6 @@ paths:
             schema:
               $ref: '#/components/schemas/Customer'
       responses:
-        "302":
-          description: Redirect
-          headers:
-            Location:
-              description: 앞으로 고객이 사용할 VDI 관리자 접속 URL, Example의 randomly는 변경 가능함.
-              schema:
-                type: string
-                format: uri
-                example: 'randomly.ktvdi.co.kr'
         default:
           $ref : '#/components/responses'
     delete:
@@ -155,6 +146,9 @@ components:
         vm-name:
           type: string
           example: "NC0101"
+        vm-spec:
+          type: string 
+          example: "2 vCore:8G Mem"
         usage-time:
           type: integer 
           description: 초단위 누적 요금
@@ -164,6 +158,8 @@ components:
       - email
       - reg-date
       - status
+      - location
+      - announceMail
       - service-manager
       - service-engineer
       properties:
@@ -179,6 +175,14 @@ components:
           type: string
           description: 현재 사용 여부 회신
           example: "설치 중","사용 중","삭제 진행 중","삭제 완료 중"
+        location:
+          type: string
+          description: 고객이 기업DaaS에 접속하기 위한 URL 
+          exmaple: honggildong.vdi.kt.com
+        announceMail:
+          type: string
+          description: location과 DaaS 구축이 완료되었을때 공지를 수신하는 메일
+          exmaple: honggildong@kt.com
         service-manager:
           description: 서비스 담당자 정보 
           example: 홍길동(010-3333-4444,honggildong@kt.com)
