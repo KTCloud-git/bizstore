@@ -151,7 +151,7 @@ components:
           example: "2 vCore:8G Mem"
         usage-time:
           type: integer 
-          description: 초단위 누적 요금
+          description: 사용시간(seconds)
           example: 123432
     Status:
       required:
