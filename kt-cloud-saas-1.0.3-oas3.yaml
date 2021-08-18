@@ -8,7 +8,7 @@ externalDocs:
   description: JWT 토큰 생성을 위한 문서
   url: https://jwt.io/#debugger-io?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoia3QgY2xvdWQgYml6IHN0b3JlIiwiaWF0IjoxNjEzMjM5MDIyfQ.Aj4dRXjzLyobZQTpxOO3p66Dq5mrBPKCb5XtD-gmhxI128la6p_CdKzLI7X2j_eFFRXQL2zf8Q7tZ2NcTJ8Pz7nq1xitp77JsBLCNBjvOqKwEmIf9R3kci2uJinkGj-xiGq3gplBOZ0jeBKv60Lt1nmKZ-LvmFh_Kf3WMTwFDOVlrwPgvXYMK4qyyCRG3JGFTjMQNX7JrNnoUfU9D8lDDsAI21fksmSU_SHEVJnc172VfXOt2UMb4eAcBP3Sk8x6MEwGXQXKp2ltEhh3NNMgY7VaKD7iPEg1--D_9g_7XuVmAqkUhm3ZcAo6dKgdXA9t99xh8TY3cbsY_QEv4dyqbQ&publicKey=-----BEGIN%20PUBLIC%20KEY-----%0AMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnzyis1ZjfNB0bBgKFMSv%0AvkTtwlvBsaJq7S5wA%2BkzeVOVpVWwkWdVha4s38XM%2Fpa%2Fyr47av7%2Bz3VTmvDRyAHc%0AaT92whREFpLv9cj5lTeJSibyr%2FMrm%2FYtjCZVWgaOYIhwrXwKLqPr%2F11inWsAkfIy%0AtvHWTxZYEcXLgAXFuUuaS3uF9gEiNQwzGTU1v0FqkqTBr4B8nW3HCN47XUu0t8Y0%0Ae%2Blf4s4OxQawWD79J9%2F5d3Ry0vbV3Am1FtGJiJvOwRsIfVChDpYStTcHTCMqtvWb%0AV6L11BWkpzGXSW4Hv43qa%2BGSYOD2QU68Mb59oSk2OB%2BBtOLpJofmbGEGgvmwyCI9%0AMwIDAQAB%0A-----END%20PUBLIC%20KEY-----
 servers:
-- url: https://연동대상시스템의 URL
+- url: www.ktbizplay.co.kr
   description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템의 IP는 하나로 지정하여 통신합니다.
 paths:
   /status/{mem-sq}:
