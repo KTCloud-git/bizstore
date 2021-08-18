@@ -123,7 +123,7 @@ components:
         configuration:
             type: string
             description: 구성정보로 Pool이나 Dedicated로 표현할 것. 
-            example: "Pool"
+            example: "Pool"           
     Bills:
       type: array
       items:
