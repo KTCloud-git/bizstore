@@ -2,7 +2,9 @@
 
 이 문서는 KT Cloud Biz 스토어<https://cloud.kt.com/bizstore>와의 연동을 위해 사용합니다
 
-연동 대상은 KT Cloud Biz 스토어의 Web server와 API server입니다
+연동 대상은 KT Cloud Biz 스토어의 API server입니다
+
+서비스를 만드는 대상은 본 문서에 정의된 API를 만들어 주셔야 합니다. 
 
 ## 알아두기
 
@@ -11,8 +13,6 @@
 - 하단 "문서 구성 내역"의 Diagram은 yuml VisualStudio Code의 yuml extention을 설치하시고, API Document는 Swagger.io extention을 설치해 주세요
 
 - API Document의 기본 규격은 Open api입니다
-
-- Bizstore 연동 시, **SSO Key**는 **kt Cloud 포탈의 MEM-SQ**로 지정되어 있습니다.
 
 ## 문서 구성 내역
 
@@ -23,7 +23,7 @@
   - 상태확인 요청 : [kt-cloud-bizstore-check-status.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-check-status.svg)
   - 상태확인 요청 API를 통해 관리포탈에서 실시간 확인 가능
 
-
 ## 저자
 
-1. KT Cloud 플랫폼개발팀 장용운 과장(yongwoon.jang@kt.com)
+1. KT Cloud 플랫폼개발팀 장용운 과장
+2. KT Cloud 플랫폼개발팀 김재희 사원
