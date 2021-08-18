@@ -120,6 +120,10 @@ components:
             type: string 
             description: 사업자 번호 
             example: "123-345-2345"
+        configuration:
+            type: string
+            description: 구성정보로 Pool이나 Dedicated로 표현할 것. 
+            example: "Pool"
     Bills:
       type: array
       items:
