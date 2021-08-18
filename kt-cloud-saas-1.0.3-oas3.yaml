@@ -155,7 +155,7 @@ components:
           example: "2 vCore:8G Mem"
         usage-time:
           type: integer 
-          description: 사용시간(seconds)
+          description: 사용시간(seconds), bill-date에 해당하는 VM 사용시간(1일 내)
           example: 123432
     Status:
       required:
