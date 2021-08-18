@@ -172,9 +172,13 @@ components:
           description: 고객 식별정보
           example: "honggildong@kt.com"
         reg-date:
-          description: 고객 신청일(비즈플레이 가입기준)
+          description: 고객 신청일
           format: yyyymmdd
           example: 20210428
+        start-date:
+          description: 서비스 시작일
+          format: yyyymmdd
+          example: 20210818
         status:
           type: string
           description: 현재 사용 여부 회신
@@ -187,14 +191,6 @@ components:
           type: string
           description: location과 DaaS 구축이 완료되었을때 공지를 수신하는 메일
           exmaple: honggildong@kt.com
-        service-manager:
-          description: 서비스 담당자 정보 
-          example: 홍길동(010-3333-4444,honggildong@kt.com)
-          format: name(010-nnnn-nnnn,name@domain)
-        service-engineer:
-          description: 서비스 엔지니어 정보
-          example: 홍길동(010-3333-4444,honggildong@kt.com)
-          format: name(010-nnnn-nnnn,name@domain)
   responses:
     "200":
       description: 성공, OK, 유효한 요청에 대한 예상된 응답
