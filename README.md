@@ -19,7 +19,7 @@
 - README.md : 설명서
 
 - KTBizstoreAPI.yaml : API 규격서 
-  * [REST Document](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
+  * [REST Document 규격](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
 
 - diagram
   \ ...  
