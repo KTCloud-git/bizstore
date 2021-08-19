@@ -1,4 +1,4 @@
-# Welcome to KT Cloud Biz 스토어
+# KT Cloud Biz 스토어
 
 이 문서는 KT Cloud Biz 스토어<https://cloud.kt.com/bizstore>와의 연동을 위해 사용합니다
 
