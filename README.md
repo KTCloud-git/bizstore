@@ -14,16 +14,18 @@
 
 - API Document의 기본 규격은 Open api입니다
 
-## 문서 구성 내역
+## Architecture 
 
-- API Document: [kt-cloud-biz-store-2.0.0.yaml](https://github.com/KTCloud-git/bizstore/blob/main/kt-cloud-saas-1.0.3-oas3.yaml) 또는 [Swagger UI](https://app.swaggerhub.com/apis-docs/KTCloud-git/bizstore/2.1.2)로 보기
-  - 서비스 신청 및 SSO : [kt-cloud-bizstore-register-sso.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-register-sso.svg)
-  - 서비스 탈퇴 : [kt-cloud-bizstore-resign.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-resign.svg)
-  - 과금정보 요청 : [kt-cloud-bizstore-customer-bill.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-daily-bill.svg)
-  - 상태확인 요청 : [kt-cloud-bizstore-check-status.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-check-status.svg)
-  - 상태확인 요청 API를 통해 관리포탈에서 실시간 확인 가능
+- README.md : 설명서
+
+- KTBizstoreAPI.yaml : API 규격서 
+  * [REST Document](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
+
+- diagram
+  \ ...  
 
 ## 저자
 
 1. KT Cloud 플랫폼개발팀 장용운 과장
+
 2. KT Cloud 플랫폼개발팀 김재희 사원
