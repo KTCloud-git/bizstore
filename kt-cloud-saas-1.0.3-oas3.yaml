@@ -143,6 +143,9 @@ components:
           type: string
           description: 약정할인율(%)
           example: 10
+        free-period:
+          description: 무료 사용 기간
+          example: yyyymmdd ~ yyyymmdd
         license-states-cd:
           type: string
           description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
