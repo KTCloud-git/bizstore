@@ -10,8 +10,6 @@
 
 - VisualStudio Code를 다운받아 문서를 열기를 권장합니다
 
-- 하단 "문서 구성 내역"의 Diagram은 yuml VisualStudio Code의 yuml extention을 설치하시고, API Document는 Swagger.io extention을 설치해 주세요
-
 - API Document의 기본 규격은 Open api입니다
 
 ## Architecture 
@@ -20,9 +18,6 @@
 
 - KTBizstoreAPI.yaml : API 규격서 
   * [REST Document 규격](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
-
-- diagram
-  \ ...  
 
 ## 저자
 
