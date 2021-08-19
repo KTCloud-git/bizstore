@@ -1,8 +1,0 @@
-// {type:sequence}
-// {generate:true}
-// 서비스 신청 및 SSO 연동 관련 API
-[KT Cloud Biz 스토어 Web]POST /customers/{mem-sq}>[연동 대상 시스템]
-[연동 대상 시스템]고객이 무료체험기간이 종료되었는지 확인>[연동 대상 시스템]
-[연동 대상 시스템]Redirect "연동 대상 시스템" page   .>[KT Cloud Biz 스토어 Web]
-
-
