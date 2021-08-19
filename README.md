@@ -12,7 +12,7 @@
 
 - API Document의 기본 규격은 Open api입니다
 
-## Architecture 
+## 파일구조
 
 - README.md : 설명서
 
