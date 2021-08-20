@@ -182,11 +182,7 @@ components:
         vm-status:
           type: array
           items:
-            $ref: '#/components/schemas/Vms'
-    Vms:
-      type: array 
-      items:
-        $ref: '#/components/schemas/Vm'
+            $ref: '#/components/schemas/Vm'
     Vm:
       type: object
       properties:
