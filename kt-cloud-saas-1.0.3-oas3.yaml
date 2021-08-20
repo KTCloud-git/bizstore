@@ -159,6 +159,10 @@ components:
             type: integer
             description: 생성 가능한 최대 VM 수
             example: 150
+        additional-disk:
+          type: string
+          description: "OS/10G, Data/20G"
+          example: "OS/10G"
     Bills:
       type: array
       items:
@@ -192,10 +196,6 @@ components:
         vm-spec:
           type: string 
           example: "2 vCore:8G Mem"
-        additional-disk:
-          type: 추가 디스크 
-          description: "OS/10G, Data/20G"
-          example: "OS/10G"
         usage-time:
           type: integer 
           description: 사용시간(seconds), bill-date에 해당하는 VM 사용시간(1일 내)
