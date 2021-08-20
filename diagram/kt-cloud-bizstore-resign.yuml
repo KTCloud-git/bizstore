@@ -1,6 +1,0 @@
-// {type:sequence}
-// {generate:true}
-// 탈퇴 관련 API
-[KT Cloud Biz 스토어 Web]DELETE /customers/{mem-sq}>[연동 대상 시스템]
-[연동 대상 시스템]성공 실패 여부   .>[KT Cloud Biz 스토어 Web]
-
