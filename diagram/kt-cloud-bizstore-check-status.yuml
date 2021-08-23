@@ -1,4 +1,0 @@
-// {type:sequence}
-// {generate:true}
-[KT Cloud Biz 스토어 Web]GET /status>[연동 대상 시스템]
-[연동 대상 시스템]고객 식별 정보, 신청일, 설치 완료일-과금 시작일, 진행현황, 솔루션 담당자-사업, 솔루션 담당자-엔지니어............... .>[KT Cloud Biz 스토어 Web]
