@@ -97,7 +97,7 @@ paths:
       responses:
         default:
           $ref : '#/components/responses'
-  /bill-list/date/{bill-date}:
+  /bill-list/{bill-date}:
     get:
       tags:
       - billing-management
@@ -124,22 +124,29 @@ paths:
                 $ref: '#/components/schemas/Bills'
         default:
           $ref: '#/components/responses'
-  /bill-list/customer/:
+  /bill-list/{bill-date}/{email}:
     get:
       tags:
       - billing-management
       summary: 사용자별 과금정보 조회
       description: 특정 고객에 대한 가입일부터 현재까지의 각 일별로 과금 정보를 회신합니다.
-      requestBody:
-        content:
-          "application/json":
-            schema:
-              required:
-                - "email"
-              properties:
-                "email" :
-                  type: string
-                  example : test@kt.com
+      parameters:
+      - name: bill-date
+        in: path
+        description: "해당 일의 사용 정보 회신, ex) 2021-08-20 이면, 2021-08-20 00:00 ~ 23:59 의, 사용량 회신(VM 이름, 해당 VM의 2021-08-20 00:00 ~ 23:59 동안의 사용시간), 
+        이렇게 되면, 고객이 2021-08-01에서 2021-08-02까지 사용을 했을 때 일할 계산을 한다고 하면. 
+        08-01의 VM 사용 수와 08-02의 VM 사용 수를 2(01 ~ 02 2일 썼으니...)로 나누고, 
+        '2일/31일(8월은 31일까지 있음.)'을 곱한 후 VM 당 월 단가를 곱하여 과금. 단, 소수점 1째자리는 사사오입을 한다.(1954년 사사오입 개헌으로 대한민국 표준임...)
+        또한, 당일 조회하는 경우 해당 시간까지의 사용량 전달"
+        required: true
+        schema:
+          type: string
+          format: yyyymmdd
+      - name: email
+        in: path
+        schema:
+          type: string
+          format: yyyymmdd
       responses:
         "200":
           description: OK
