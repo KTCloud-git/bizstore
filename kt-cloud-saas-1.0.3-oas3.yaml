@@ -5,7 +5,7 @@ info:
   description: SSL 인증으로 진행합니다. 
   version: 3.0.0
 servers:
-- url: https://연동대상시스템의 URL
+- url: https://{server url}
   description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템의 IP는 하나로 지정하여 통신합니다.
 paths:
   /status/:
@@ -43,7 +43,6 @@ paths:
               schema:
                 type: string
                 format: uri
-                example: 'http://연동대상시스템URL/SSO_URI?Query'
         default:
           $ref : '#/components/responses'
     delete:
@@ -71,7 +70,7 @@ paths:
       summary: 날짜별 과금정보 조회
       description: 연동 시스템에서 보유한 특정 일 곧 {bill-day}까지 과금했을 때의 요금을 회신합니다.
       parameters:
-      - name: bill-day
+      - name: bill-date
         in: path
         description: 조회하고 싶은 일자를 의미합니다.(해당 일의 요금 정보를 회신. 해당 월 요금 기준으로 일할 계산)
         required: true
@@ -84,7 +83,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Bills'
+                $ref: '#/components/schemas/bills'
         default:
           $ref: '#/components/responses'
   /bill-list/customer/:
@@ -109,27 +108,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Bill'
+                $ref: '#/components/schemas/bill'
         default:
           $ref: '#/components/responses'
 components:
   schemas:
-    Bills:
+    bills:
       type: array
       items:
-        $ref: '#/components/schemas/Bill'
-    Bill:
+        $ref: '#/components/schemas/bill'
+    bill:
       required:
-      - mem-sq
+      - email
       - bill-date
       - service-info
       - free-period
       - license-count
       - pay-amt
       properties:
-        mem-sq:
+       email:
           type: string
-          format: UTF-8
+          description: 고객식별 정보
         bill-date:
           type: string
           format: yyyy-mm-dd
@@ -142,97 +141,54 @@ components:
           description: 시작일~종료일
           format: yyyymmdd~yyyymmdd
           example: "20210301~202010501"
-        contract-discount-period:
-          type: string
-          description: 시작일~종료일
-          format: yyyymmdd~yyyymmdd
-          example: "20210301~202010501"
         license-count:
           type: string
           description: 사용량
-        usage-pay-amt:
+        pay-amt:
           type: integer
           description: license-count 기반 요금 (KRW 단위)
-          format: int32
-        install-complete-date: 
-          type: string
-          format: yyyy-mm-dd
-          description: 컨설팅을 통한 설치 완료일
-        onetime-pay-amt:
-          type: integer
-          description: onetime type과 install-complete-date 기반으로 계산된 도입비 (KRW 단위)
           format: int32
     customer-body:
       type: object
       properties:
-        mem-sq:
+        email:
           type: string
           description: 고객식별 정보 
-          example: "M12345"
         service-info:
           type: string
           description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
           example: "2"
           enum: [2,3,4,5]
-        contract-discount-percentage:
+        free-period:
           type: string
-          description: 약정할인율(%)
-          example: 10
-        contract-discount-period:
-          type: string
-          description: 약정할인 기간(시작일~종료일)
+          description: 시작일~종료일
           format: yyyymmdd~yyyymmdd
-          example: 20210301~202010501
+          example: "20210301~202010501"
         customer-status:
           type: string
           description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
           example: "0"
-    inline_response_200:
-      required:
-      - description
-      - success
-      properties:
-        success:
-          description: 성공 실패 여부를 의미한다.
-          example: true or false
-        description:
-          description: 실패 여부의 상세 원인을 표현한다.
     status:
       required:
-      - mem-sq
+      - email
       - reg-date
-      - install-complete-date
+      - start-date
       - status
-      - service-manager
-      - service-engineer
       properties:
-        mem-sq:
+        email:
           description: 고객 식별정보
           example: M12345
-        license-start-date:
-          description: 고객 신청일(kt cloud bizstore 신청기준)
-          format: yyyymmdd
-          example: 20210428
         reg-date:
-          description: 고객 신청일(비즈플레이 가입기준)
+          description: 고객 신청일
           format: yyyymmdd
           example: 20210428
-        install-complete-date:
-          description: 설치 완료일.
+        start-date:
+          description: 서비스 시작일 
           format: yyyymmdd
-          example: 20210428 (설치 진행 중일 땐 99999999 (기본값))
         status:
           type: string
           description: 0(설치진행중) / 1(설치 완료) / 98(삭제진행중) / (삭제 완료 - delete되서 값 없으면 401 코드 또는 "99" 값으로 리턴)
           example: "1"
-        service-manager:
-          description: 서비스 담당자 정보 
-          example: 홍길동(010-3333-4444,honggildong@kt.com)
-          format: name(010-nnnn-nnnn,name@domain)
-        service-engineer:
-          description: 서비스 엔지니어 정보
-          example: 홍길동(010-3333-4444,honggildong@kt.com)
-          format: name(010-nnnn-nnnn,name@domain)
   responses:
     "200":
       description: 성공, OK, 유효한 요청에 대한 예상된 응답
