@@ -78,6 +78,25 @@ paths:
       responses:
         default:
           $ref : '#/components/responses'
+  /modify/:
+    post:
+      tags:
+      - modify-management
+      summary: 서비스 변경
+      description: 최대 VM수 변경 요청
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - "max-amount"
+              properties:
+                "max-amount" :
+                  type: integer
+                  example : 150
+      responses:
+        default:
+          $ref : '#/components/responses'
   /bill-list/date/{bill-date}:
     get:
       tags:
@@ -191,7 +210,7 @@ components:
           example: "NC0101"
         vm-spec:
           type: string 
-          example: "2 vCore:8G Mem"
+          example: "2 vCore:4G Mem"
         usage-time:
           type: integer 
           description: 사용시간(seconds), bill-date에 해당하는 VM 사용시간(1일 내)
