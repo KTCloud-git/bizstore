@@ -210,7 +210,7 @@ components:
           example: "NC0101"
         vm-spec:
           type: string 
-          example: "2 vCore:4G Mem"
+          example: "2vCore x 4GB"
         usage-time:
           type: integer 
           description: 사용시간(seconds), bill-date에 해당하는 VM 사용시간(1일 내)
