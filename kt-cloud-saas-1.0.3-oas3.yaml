@@ -95,8 +95,14 @@ paths:
                   type: integer
                   example : 150
       responses:
+        "200":
+          description: OK
+        "400":
+          description: 만약 현재 최대VM수가 100개이고 사용자가 VM을 100개 생성한 시점에서 80개로 변경하려고 할 때
+                       400 error와 함께 '현재 VM의 수가 변경할 최대 VM의 수 보다 많습니다'로 응답.
+                       동일하게 30개 미만으로 변경 시 400 error와 함께 '최소 변경 가능한 VM수는 30개 입니다.'로 응답
         default:
-          $ref : '#/components/responses'
+          $ref: '#/components/responses'
   /bill-list/{bill-date}:
     get:
       tags:
