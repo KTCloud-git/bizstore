@@ -46,7 +46,7 @@ paths:
                 $ref: '#/components/schemas/Status'
         default:
           description: 예상못한 에러
-  /customers/:
+  /customers/{email}:
     post:
       tags:
       - customer-management
@@ -65,25 +65,29 @@ paths:
       - customer-management
       summary: 고객 탈퇴
       description: 고객 탈퇴처리를 위해 email에 해당하는 고객을 전달합니다.
-      requestBody:
-        content:
-          "application/json":
-            schema:
-              required:
-                - "email"
-              properties:
-                "email" :
-                  type: string
-                  example : test@kt.com
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
       responses:
         default:
           $ref : '#/components/responses'
-  /modify/:
+  /modify/{email}:
     post:
       tags:
       - modify-management
       summary: 서비스 변경
       description: 최대 VM수 변경 요청
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
       requestBody:
         content:
           application/json:
