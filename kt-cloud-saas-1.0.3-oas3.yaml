@@ -60,23 +60,7 @@ paths:
       responses:
         default:
           $ref : '#/components/responses'
-    delete:
-      tags:
-      - customer-management
-      summary: 고객 탈퇴
-      description: 고객 탈퇴처리를 위해 email에 해당하는 고객을 전달합니다.
-      parameters:
-        - name: "email"
-          in: path
-          required: true
-          schema:
-            type: string
-            example : test@kt.com
-      responses:
-        default:
-          $ref : '#/components/responses'
-  /modify/{email}:
-    post:
+    put:
       tags:
       - modify-management
       summary: 서비스 변경
@@ -107,6 +91,21 @@ paths:
                        동일하게 30개 미만으로 변경 시 400 error와 함께 '최소 변경 가능한 VM수는 30개 입니다.'로 응답
         default:
           $ref: '#/components/responses'
+    delete:
+      tags:
+      - customer-management
+      summary: 고객 탈퇴
+      description: 고객 탈퇴처리를 위해 email에 해당하는 고객을 전달합니다.
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      responses:
+        default:
+          $ref : '#/components/responses'
   /bill-list/{bill-date}:
     get:
       tags:
