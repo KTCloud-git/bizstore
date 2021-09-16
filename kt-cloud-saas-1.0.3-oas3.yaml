@@ -27,7 +27,7 @@ paths:
     post:
       tags:
       - customer-management
-      summary: 서비스 신청, SSO 연동 관련 API.
+      summary: 서비스 신청
       description: 고객정보를 연동대상시스템으로 전달하여 서비스 신청.
       requestBody:
         content:
