@@ -153,6 +153,10 @@ components:
           type: integer
           description: onetime type과 install-complete-date 기반으로 계산된 도입비 (KRW 단위)
           format: int32
+        additional-service-amt:
+          type: integer
+          description: 부가서비스로 발생된 요금 (KRW 단위)
+          format: int32
     customer-body:
       type: object
       properties:
