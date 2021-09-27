@@ -1,210 +1,227 @@
----
-openapi: 3.0.3
+openapi: '3.0.2'
 info:
-  title: KT Cloud Bizstore 서비스 API
-  description: SSL 인증으로 진행합니다. 
-  version: 3.0.0
+  title: 고객 신청/변경/탈퇴 API
+  version: '1.0.3'
 servers:
-- url: https://{server url}
-  description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템의 IP는 하나로 지정하여 통신합니다.
+  - url: https://meet.ktworks.co.kr
 paths:
-  /status/:
-    get:
-      tags:
-      - status-management
-      summary: 서비스 상태값 조회
-      description: 고객의 서비스 상태값 조회
-      responses:
-        "200":
-          description: 유효한 요청에 대한 올바른 응답
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/status'
-        default:
-          description: 예상못한 에러
-  /customers/:
+  /customer-management/customers/getToken:
     post:
+      summary: 서비스 신청, 등록 API로 최초 getToken을 사용해서 Token을 가져옴 
+      description: Header의 값은 example의 값으로 고정되며, 받은 토큰을 putToken으로 전달해야함 
+      security:
+        - ApiKeyAuth: []
+          example: ['Basic sdjfklsdfjksldjfkl']
       tags:
-      - customer-management
-      summary: 서비스 신청, SSO 연동 관련 API.
-      description: 고객정보를 연동대상시스템으로 전달하여 서비스 신청.
+        - regiser-customer
       requestBody:
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/customer-body'
+            schema:      
+              type: object
+              properties:
+                memSq:
+                  type: string 
+                  description: KT Cloud가 보유하고 있는 고유의 고객 식별자 
+                  example: M12345
+                licenseStartDate:
+                  type: string
+                  description: 라이선스 시작 일 (yyyyMMdd)
+                  example: 20201210
+                licenseEndDate:
+                  type: string
+                  description: 라이선스 종료 일 (yyyyMMdd)
+                  example: 2021030
+                licenseDvsCd:
+                  type: string
+                  description: 라이선스 구분(데모 = 0 , 유료 = 1)
+                  example: 1
+                licenseStatusCd:
+                  type: string
+                  description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
+                  example: 0
       responses:
-        "302":
-          description: Redirect
-          headers:
-            Location:
-              description: 연동대상시스템의 로그인페이지
+        '200':
+          description: 고객에게 정상적으로 KT Meet의 로그인 페이지를 전달합니다. 
+          content:
+            text/html:
               schema:
                 type: string
-                format: uri
+                example:
+                  html:
+                    summary: 고객에게 보여줄 html page 
+                    value: '<html>....</html>'
+        '401':  
+          description: not_match_authorization = authKey 에러  
         default:
-          $ref : '#/components/responses'
-    delete:
-      tags:
-      - customer-management
-      summary: 고객 탈퇴
-      description: 고객 탈퇴처리를 위해 mem-sq에 해당하는 고객 레코드에 탈퇴일을 추가합니다. 
-      requestBody:
-        content:
-          "application/json":
-            schema:
-              required:
-                - "email"
-              properties:
-                "email" :
-                  type: string
-                  example : test@kt.com
-      responses:
-        default:
-          $ref : '#/components/responses'
-  /bill-list/date/{bill-day}:
+          description: 예상못한 에러   
+  /customer-management/customers/putToken:
     get:
+      summary: /customer-management/customers/{mem-sq}/getToken 토큰을 처리
       tags:
-      - billing-management
-      summary: 날짜별 과금정보 조회
-      description: 연동 시스템에서 보유한 특정 일 곧 {bill-day}까지 과금했을 때의 요금을 회신합니다.
+        - register 
       parameters:
-      - name: bill-date
-        in: path
-        description: 조회하고 싶은 일자를 의미합니다.(해당 일의 요금 정보를 회신. 해당 월 요금 기준으로 일할 계산)
-        required: true
-        schema:
-          type: string
-          format: yyyy-mm-dd
+        - name: t
+          in: query
+          description: /customer-management/customer/token 에서 받은 토큰값
+          example: 'https://meet.ktworks.co.kr/customer-management/customer/getToken?t=토큰값'
+          schema:
+            type: string
       responses:
-        "200":
-          description: OK
+        '200':
+          description: HTML 페이지 회신 
           content:
-            application/json:
+            text/html:
+              example: "로그인이 적용된 HTML 페이지"
               schema:
-                $ref: '#/components/schemas/bills'
-        default:
-          $ref: '#/components/responses'
-  /bill-list/customer/:
+                type: string 
+  /customer-management/customers/{mem-sq}/resign:
     get:
-      tags:
-      - billing-management
-      summary: 사용자별 과금정보 조회
-      description: 특정 고객에 대한 가입일부터 현재까지의 각 일별로 과금 정보를 회신합니다.
-      requestBody:
-        content:
-          "application/json":
-            schema:
-              required:
-                - "email"
-              properties:
-                "email" :
-                  type: string
-                  example : test@kt.com
+      summary: 고객 탈퇴 
+      description : Auth Key 값은 Basic 값 입니다. 
+      security:
+        - ApiKeyAuth: []
+          example: ['Basic sadfsdafsdfd']
+      parameters:
+        - name: mem-sq
+          in: path
+          description: KT Cloud가 보유하고 있는 고유의 고객 식별자
+          required: true
+          schema:
+            type: string
       responses:
-        "200":
+        '200':
+          description: 유효한 요청에 대한 예상된 응답
+          content:
+            application/json:
+              schema:
+                required:
+                  - "success"
+                  - "description"
+                properties:
+                  success:
+                    description: 성공 실패 여부를 의미한다.
+                    example: "true or false"
+                  description:
+                    description: 실패 여부의 상세 원인을 표현한다. 
+        '401':
+          description: not_match_authorization = authKey 에러
+        default:
+          description: 예상못한 에러
+  /bill-management/{bill-day}/bill-list:
+    get:
+      description: 연동 시스템에서 보유한 특정 일 곧 {bill-day}까지 과금했을 때의 요금을 회신합니다. 
+      security:
+        - ApiKeyAuth: []
+          example: ['Basic sdafsdfsdf']
+      tags:
+        - get-billinfo-day
+      parameters:
+        - name: bill-day
+          in: path
+          description: 조회하고 싶은 일자를 의미합니다.(해당 일의 요금 정보를 회신. 해당 월 요금 기준으로 일할 계산)
+          required: true
+          schema:
+            type: string
+            format: "yyyy-mm-dd"
+      responses:
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/bill'
+                $ref: "#/components/schemas/Bills"
         default:
           $ref: '#/components/responses'
+  /bill-management/customers/{mem-sq}/bill-list:
+    get:
+      description: 특정 고객에 대한 가입일부터 현재까지의 각 일별로 라이선스 정보를 회신합니다. 
+      security:
+        - ApiKeyAuth: []
+          example: ['Basic dsadfsadfsdfsdf']
+      tags:
+        - get-billinfo
+      parameters:
+        - name: mem-sq 
+          in: path
+          description: KT Cloud가 보유하고 있는 고유의 고객 식별자
+          required: true
+          schema:
+            type: string
+        - name: bill-day
+          in : query
+          description: 조회하고 싶은 월을 의미합니다.
+          required: true
+          schema:
+            type: string
+            format: "yyyy-mm-dd"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Usage"             
 components:
+  responses:
+    '200':
+      description: 성공, OK, 유효한 요청에 대한 예상된 응답
+    '201':
+      description: 성공, Created, 자원 생성 완료
+    '202':
+      description: 성공, Accepted, 시간 지연 
+    '400':
+      description: 실패, Bad request  
+    '401':
+      description: 실패, Unauthorized, 유저 권한 없음 
+    '403':
+      description: 실패, Forbidden, 유저 권한 문제
+    '404':
+      description: 실패, Not Found, 찾지 못함. 
+    '405':
+      description: 실패, Method not allowed, Request의 endpoint와 resource가 유효하지 않음.
   schemas:
-    bills:
+    Bills:
       type: array
       items:
-        $ref: '#/components/schemas/bill'
-    bill:
+        $ref: '#components/schemas/Bill'
+    Bill:
       required:
-      - email
-      - bill-date
-      - service-info
-      - free-period
-      - license-count
-      - pay-amt
+        - bill-day
+        - mem-sq
+        - license-count
+        - pay-amt
       properties:
-       email:
+        bill-day:
           type: string
-          description: 고객식별 정보
-        bill-date:
+          format: "yyyy-mm-dd"
+        mem-sq:
           type: string
-          format: yyyy-mm-dd
-        service-info:
-          type: string
-          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
-          example: "2"
-        free-period:
-          type: string
-          description: 시작일~종료일
-          format: yyyymmdd~yyyymmdd
-          example: "20210301~202010501"
+          format: UTF-8
         license-count:
           type: string
-          description: 사용량
+          description: 해당 일자까지 요금 계산할 때의 license count로 1일에 5 license 2일에 6 license 사용시 다음날 전날 데이터 조회시 ⌈5+6/2⌉로 표시 
         pay-amt:
           type: integer
-          description: license-count 기반 요금 (KRW 단위)
           format: int32
-    customer-body:
-      type: object
-      properties:
-        email:
-          type: string
-          description: 고객식별 정보 
-        service-info:
-          type: string
-          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
-          example: "2"
-          enum: [2,3,4,5]
-        free-period:
-          type: string
-          description: 시작일~종료일
-          format: yyyymmdd~yyyymmdd
-          example: "20210301~202010501"
-        customer-status:
-          type: string
-          description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
-          example: "0"
-    status:
+          description: 'KRW 단위'
+    Usage:
       required:
-      - email
-      - reg-date
-      - start-date
-      - status
+        - bill-day
+        - mem-sq
+        - license-count
       properties:
-        email:
-          description: 고객 식별정보
-          example: M12345
-        reg-date:
-          description: 고객 신청일
-          format: yyyymmdd
-          example: 20210428
-        start-date:
-          description: 서비스 시작일 
-          format: yyyymmdd
-        status:
-          type: string
-          description: 0(설치진행중) / 1(설치 완료) / 98(삭제진행중) / (삭제 완료 - delete되서 값 없으면 401 코드 또는 "99" 값으로 리턴)
-          example: "1"
-  responses:
-    "200":
-      description: 성공, OK, 유효한 요청에 대한 예상된 응답
-    "201":
-      description: 성공, Created, 자원 생성 완료
-    "202":
-      description: 성공, Accepted, 시간 지연
-    "400":
-      description: 실패, Bad request, 상세한 실패 원인 회신 할 것.
-    "401":
-      description: 실패, Unauthorized, 유저 권한 없음
-    "403":
-      description: 실패, Forbidden, 유저 권한 문제
-    "404":
-      description: 실패, Not Found, 찾지 못함.
-    "405":
-      description: 실패, Method not allowed, Request의 endpoint와 resource가 유효하지 않음.
-    "406":
-      description: 실패, 무료체험 고객
+        bill-day:
+          type: string 
+          format: "yyyy-mm-dd"
+        mem-sq:
+          type: string 
+          format: UTF-8
+        license-count:
+          type: string 
+          description: 해당 일자에 등록한 라이선스 #/components/Bill과는 다름.
+  securitySchemes:
+    ApiKeyAuth:        # arbitrary name for the security scheme
+      type: apiKey
+      in: header       # can be "header", "query" or "cookie"
+      name: Authorization  # name of the header, query parameter or cookie      
