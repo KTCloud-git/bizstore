@@ -4,7 +4,7 @@ info:
   version: 1.0.4
   description: |
     server url 변경(2021.03.16), '/OpenGate로 요청 전송 부탁드립니다. /OpenGate 뒤의 Path의 경우 예시를 위해 만들어놓은 값입니다. 
-    ex) curl -X POST "https://ktworks.co.kr/OpenGate" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{\"JSONData\":{\"API_KEY\":\"KT_FLOW_USER_DEL\",\"CNTS_CRTC_KEY\":\"20200904-e2bda1d1-2bb7-46b7-b019-197136dd6add\",\"REQ_DATA\":{\"USER_ID\":\"madrascheck2016@gmail.com\"}}}"'
+    ex) curl -X POST "https://ktworks.co.kr/OpenGate" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{\"JSONData\":{\"API_KEY\":\"KT_FLOW_USER_DEL\",\"CNTS_CRTC_KEY\":\"20202222-asdf-asdf-asdf-asdf-asdfsdf\",\"REQ_DATA\":{\"USER_ID\":\"asdf@gmail.com\"}}}"'
   contact:
     email: ***@flow.team
     url: 'https://flow.team'
