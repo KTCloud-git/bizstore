@@ -17,11 +17,7 @@
 ## 문서 구성 내역
 
 - API Document: [kt-cloud-biz-store-2.0.0.yaml](https://github.com/KTCloud-git/bizstore/blob/main/kt-cloud-saas-1.0.3-oas3.yaml) 또는 [Swagger UI](https://app.swaggerhub.com/apis-docs/KTCloud-git/bizstore/2.1.2)로 보기
-  - 서비스 신청 및 SSO : [kt-cloud-bizstore-register-sso.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-register-sso.svg)
-  - 서비스 탈퇴 : [kt-cloud-bizstore-resign.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-resign.svg)
-  - 과금정보 요청 : [kt-cloud-bizstore-customer-bill.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-daily-bill.svg)
-  - 상태확인 요청 : [kt-cloud-bizstore-check-status.yuml](https://github.com/KTCloud-git/bizstore/blob/main/diagram/kt-cloud-bizstore-check-status.svg)
-  - 상태확인 요청 API를 통해 관리포탈에서 실시간 확인 가능
+  - 무료 방문 신청, 서비스 신청, 서비스 탈퇴, 과금정보 요청, 상태확인 요청
 
 
 ## 저자
