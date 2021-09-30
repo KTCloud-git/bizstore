@@ -1,210 +1,398 @@
----
-openapi: 3.0.3
+openapi: 3.0.2
 info:
-  title: KT Cloud Bizstore 서비스 API
-  description: SSL 인증으로 진행합니다. 
-  version: 3.0.0
+  title: 고객 신청/탈퇴/과금정보 조회 API
+  version: 1.1.0
+  description: '/OpenGate로 요청 전송, /OpenGate 뒤의 Path의 경우. 
+  ex) curl -X POST "https://ktworks.co.kr/OpenGate" 
+  -H  "accept:application/json" 
+  -H  "Content-Type:application/json" 
+  -d "{\"JSONData\":
+                    {
+                      \"API_KEY\":\"KT_FLOW_USER_DEL\",
+                      \"CNTS_CRTC_KEY\":\"****-*****-*****-*****\",
+                      \"REQ_DATA\":
+                                  {
+                                    \"USER_ID\":\"****@gmail.com\"
+                                  }
+                    }
+      }"'
+  contact:
+    email: unkown@flow.team
+    name: Unkown
+    url: 'https://flow.team'
 servers:
-- url: https://{server url}
-  description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템의 IP는 하나로 지정하여 통신합니다.
+  - url: 'https://staging.ktworks.co.kr/OpenGate'
 paths:
-  /status/:
-    get:
-      tags:
-      - status-management
-      summary: 서비스 상태값 조회
-      description: 고객의 서비스 상태값 조회
-      responses:
-        "200":
-          description: 유효한 요청에 대한 올바른 응답
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/status'
-        default:
-          description: 예상못한 에러
-  /customers/:
+  '/KT_FLOW_USER_DEL':
     post:
-      tags:
-      - customer-management
-      summary: 서비스 신청, SSO 연동 관련 API.
-      description: 고객정보를 연동대상시스템으로 전달하여 서비스 신청.
+      summary: 서비스 해지
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customer-body'
-      responses:
-        "302":
-          description: Redirect
-          headers:
-            Location:
-              description: 연동대상시스템의 로그인페이지
-              schema:
-                type: string
-                format: uri
-        default:
-          $ref : '#/components/responses'
-    delete:
-      tags:
-      - customer-management
-      summary: 고객 탈퇴
-      description: 고객 탈퇴처리를 위해 mem-sq에 해당하는 고객 레코드에 탈퇴일을 추가합니다. 
-      requestBody:
-        content:
-          "application/json":
-            schema:
+              type: object
               required:
-                - "email"
+                - JSONObject
+                - API_KEY
+                - REQ_DATA
+                - CNTS_CRTC_KEY
               properties:
-                "email" :
-                  type: string
-                  example : test@kt.com
+                JSONData:
+                  type: object
+                  properties:
+                    API_KEY:
+                      description: '사용할 API Key
+                                    / 해지: KT_FLOW_USER_DEL 
+                                    / 빌링: KT_FLOW_BILLING'
+                      type: string
+                      example: KT_FLOW_USER_DEL
+                    CNTS_CRTC_KEY:
+                      description: '암호화 값, API 를 이용하는데 필요한 KEY'
+                      type: string
+                      example: '****-*****-*****-*****'
+                    REQ_DATA:
+                      description: API 를 이용하는데 필요한 데이터 값
+                      type: object
+                      properties:
+                        USER_ID:
+                          description: 'USER_ID 
+                                        / 서비스 해지시 필수 값
+                                        / 빌링처리 시 한명의 정보만 필요할 때 입력 '
+                          type: string
+                          example: '****@gmail.com'
       responses:
-        default:
-          $ref : '#/components/responses'
-  /bill-list/date/{bill-day}:
-    get:
-      tags:
-      - billing-management
-      summary: 날짜별 과금정보 조회
-      description: 연동 시스템에서 보유한 특정 일 곧 {bill-day}까지 과금했을 때의 요금을 회신합니다.
-      parameters:
-      - name: bill-date
-        in: path
-        description: 조회하고 싶은 일자를 의미합니다.(해당 일의 요금 정보를 회신. 해당 월 요금 기준으로 일할 계산)
-        required: true
-        schema:
-          type: string
-          format: yyyy-mm-dd
-      responses:
-        "200":
-          description: OK
+        '200':
+          description: 정상응답 , 2021년 2월 15일 탈퇴 시
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/bills'
-        default:
-          $ref: '#/components/responses'
-  /bill-list/customer/:
-    get:
-      tags:
-      - billing-management
-      summary: 사용자별 과금정보 조회
-      description: 특정 고객에 대한 가입일부터 현재까지의 각 일별로 과금 정보를 회신합니다.
+                type: object
+                required:
+                  - API_KEY
+                  - RSLT_CD
+                  - RSLT_MSG
+                properties:
+                  API_KEY:
+                    description: 어떤 역할에 대한 응답인지 정의.
+                    example: KT_FLOW_USER_DEL
+                  RSLT_CD:
+                    description: '응답 코드, 
+                                  / 0000 -> 정상
+                                  / xxxx -> 비정상'
+                    example: '0000'
+                  RSLT_MSG:
+                    description: 에러 메세지
+                    type: string
+                    example: ''
+                  PAY_REC:
+                    description: 빌링에 사용되는 값을 의미함.
+                    format: object
+                    properties:
+                      USER_ID:
+                        type: string
+                        description: KT Cloud 유저 아이디
+                      GUBUN:
+                        type: string
+                        description: 결제에 사용된 [Lite/Standard] 등의 구분값으로 [1,2] 사용
+                      AMT:
+                        type: number
+                        description: 특정 기간동안 사용한 금액 
+                      DESC:
+                        type: array
+                        description: 계산된 금액에 대한 처리 사유
+                        properties:
+                          USER_CNT:
+                            type: number
+                            description: 해당 일 유저 수
+                          START_DT:
+                            type: string
+                            description: 결제 시작 데이터 format yyyymmdd
+                          END_DT:
+                            type: string
+                            description: 결제 종료 데이터 format yyyymmdd
+                          AMT:
+                            description: '결제 금액 / 일별'
+                            type: number
+                          CALC:
+                            type: string
+                            description: '결제 식 : 인원 * 기간 * 금액 / 월 날짜 '
+                    example:
+                      - USER_ID: '****@gmail.com'
+                        AMT: 51430
+                        GUBUN: 1
+                        DESC:
+                          - USER_CNT: 30
+                            START_DT: '20210201'
+                            END_DT: '20210202'
+                            CALC: 30 * 6000 * 2 / 28
+                            AMT: 12858
+                          - USER_CNT: 15
+                            START_DT: '20210203'
+                            END_DT: '20210212'
+                            CALC: 15 * 6000 * 10 / 28
+                            AMT: 32143
+                          - USER_CNT: 10
+                            START_DT: '20210213'
+                            END_DT: '20210215'
+                            CALC: 10 * 6000 * 3 / 28
+                            AMT: 6429
+  '/KT_FLOW_BILLING/1':
+    post:
+      summary: 빌링 처리 [한 유저]
       requestBody:
         content:
-          "application/json":
+          application/json:
             schema:
+              type: object
               required:
-                - "email"
+                - JSONObject
+                - API_KEY
+                - REQ_DATA
+                - CNTS_CRTC_KEY
               properties:
-                "email" :
-                  type: string
-                  example : test@kt.com
+                JSONData:
+                  type: object
+                  properties:
+                    API_KEY:
+                      description: '사용할 API Key 
+                                    / 해지: KT_FLOW_USER_DEL 
+                                    / 빌링: KT_FLOW_BILLING'
+                      type: string
+                      example: KT_FLOW_BILLING
+                    CNTS_CRTC_KEY:
+                      description: '암호화 값, API 를 이용하는데 필요한 KEY'
+                      type: string
+                      example: '****-*****-*****-*****'
+                    REQ_DATA:
+                      description: API 를 이용하는데 필요한 데이터 값
+                      type: object
+                      properties:
+                        USER_ID:
+                          description: 'USER_ID 
+                                        / 서비스 해지 시, 필수 값.
+                                        / 빌링처리 시 한 명의 정보만 필요할 때 입력 '
+                          type: string
+                          example: '****@gmail.com'
       responses:
-        "200":
-          description: OK
+        '200':
+          description: 정상응답
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/bill'
-        default:
-          $ref: '#/components/responses'
-components:
-  schemas:
-    bills:
-      type: array
-      items:
-        $ref: '#/components/schemas/bill'
-    bill:
-      required:
-      - email
-      - bill-date
-      - service-info
-      - free-period
-      - license-count
-      - pay-amt
-      properties:
-       email:
-          type: string
-          description: 고객식별 정보
-        bill-date:
-          type: string
-          format: yyyy-mm-dd
-        service-info:
-          type: string
-          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
-          example: "2"
-        free-period:
-          type: string
-          description: 시작일~종료일
-          format: yyyymmdd~yyyymmdd
-          example: "20210301~202010501"
-        license-count:
-          type: string
-          description: 사용량
-        pay-amt:
-          type: integer
-          description: license-count 기반 요금 (KRW 단위)
-          format: int32
-    customer-body:
-      type: object
-      properties:
-        email:
-          type: string
-          description: 고객식별 정보 
-        service-info:
-          type: string
-          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
-          example: "2"
-          enum: [2,3,4,5]
-        free-period:
-          type: string
-          description: 시작일~종료일
-          format: yyyymmdd~yyyymmdd
-          example: "20210301~202010501"
-        customer-status:
-          type: string
-          description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
-          example: "0"
-    status:
-      required:
-      - email
-      - reg-date
-      - start-date
-      - status
-      properties:
-        email:
-          description: 고객 식별정보
-          example: M12345
-        reg-date:
-          description: 고객 신청일
-          format: yyyymmdd
-          example: 20210428
-        start-date:
-          description: 서비스 시작일 
-          format: yyyymmdd
-        status:
-          type: string
-          description: 0(설치진행중) / 1(설치 완료) / 98(삭제진행중) / (삭제 완료 - delete되서 값 없으면 401 코드 또는 "99" 값으로 리턴)
-          example: "1"
-  responses:
-    "200":
-      description: 성공, OK, 유효한 요청에 대한 예상된 응답
-    "201":
-      description: 성공, Created, 자원 생성 완료
-    "202":
-      description: 성공, Accepted, 시간 지연
-    "400":
-      description: 실패, Bad request, 상세한 실패 원인 회신 할 것.
-    "401":
-      description: 실패, Unauthorized, 유저 권한 없음
-    "403":
-      description: 실패, Forbidden, 유저 권한 문제
-    "404":
-      description: 실패, Not Found, 찾지 못함.
-    "405":
-      description: 실패, Method not allowed, Request의 endpoint와 resource가 유효하지 않음.
-    "406":
-      description: 실패, 무료체험 고객
+                type: object
+                required:
+                  - API_KEY
+                  - RSLT_CD
+                  - RSLT_MSG
+                properties:
+                  API_KEY:
+                    description: 어떤 역할에 대한 응답인지 정의.
+                    example: KT_FLOW_BILLING
+                  RSLT_CD:
+                    description: '응답 코드, 0000 -> 정상, xxxx -> 비정상'
+                    example: '0000'
+                  RSLT_MSG:
+                    description: 에러 메세지
+                    type: string
+                    example: ''
+                  PAY_REC:
+                    description: 빌링에 사용되는 값을 의미함.
+                    format: object
+                    properties:
+                      USER_ID:
+                        type: string
+                        description: KT Cloud 유저 아이디
+                      GUBUN:
+                        type: string
+                        description: 결제에 사용된 [Lite/Standard] 등의 구분값으로 [1,2] 사용
+                      AMT:
+                        type: number
+                        description: 특정 기간동안 사용한 금액 
+                      DESC:
+                        type: array
+                        description: 계산된 금액에 대한 처리 사유
+                        properties:
+                          USER_CNT:
+                            type: number
+                            description: 해당 일 유저 수
+                          START_DT:
+                            type: string
+                            description: 결제 시작 데이터 format yyyymmdd
+                          END_DT:
+                            type: string
+                            description: 결제 종료 데이터 format yyyymmdd
+                          AMT:
+                            description: '결제 금액 / 일별'
+                            type: number
+                          CALC:
+                            type: string
+                            description: '결제 식 : 인원 * 기간 * 금액 / 월 날짜 '
+                    example:
+                      - USER_ID: '****@gmail.com'
+                        AMT: 87859
+                        GUBUN: 1
+                        FREE_PERIOD : '20201201-20210101'
+                        DESC:
+                          - USER_CNT: 30
+                            START_DT: '20210201'
+                            END_DT: '20210202'
+                            CALC: 30 * 6000 * 2 / 28
+                            AMT: 12858
+                          - USER_CNT: 15
+                            START_DT: '20210203'
+                            END_DT: '20210212'
+                            CALC: 15 * 6000 * 10 / 28
+                            AMT: 32143
+                          - USER_CNT: 10
+                            START_DT: '20210213'
+                            END_DT: '20210220'
+                            CALC: 10 * 6000 * 8 / 28
+                            AMT: 17143
+                          - USER_CNT: 15
+                            START_DT: '20210221'
+                            END_DT: '20210228'
+                            CALC: 15 * 6000 * 8 / 28
+                            AMT: 25715
+                          
+  '/KT_FLOW_BILLING/2':
+    post:
+      summary: 빌링 처리
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - JSONObject
+                - API_KEY
+                - REQ_DATA
+                - CNTS_CRTC_KEY
+              properties:
+                JSONData:
+                  type: object
+                  properties:
+                    API_KEY:
+                      description: '사용할 API Key / 해지: KT_FLOW_USER_DEL / 빌링: KT_FLOW_BILLING'
+                      type: string
+                      example: KT_FLOW_BILLING
+                    CNTS_CRTC_KEY:
+                      description: '암호화 값, API 를 이용하는데 필요한 KEY'
+                      type: string
+                      example: '****-*****-*****-*****'
+                    REQ_DATA:
+                      description: API 를 이용하는데 필요한 데이터 값
+                      type: object
+                      properties:
+                        PAY_MON:
+                          description: >-
+                            빌링에만 필요 USER_ID 혹은 PAY_MON 둘 중 한개의 값을 입력 
+                            / 전체 빌링하는데 필요한 값 
+                            / String(6) 202102 의 경우의 response값
+                            / 2021-02-01~2021-02-02 까지 사용한 인원들의 값
+                          type: string
+                          example: '202102'
+      responses:
+        '200':
+          description: 정상응답
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - API_KEY
+                  - RSLT_CD
+                  - RSLT_MSG
+                properties:
+                  API_KEY:
+                    description: 어떤 역할에 대한 응답인지 정의.
+                    example: KT_FLOW_BILLING
+                  RSLT_CD:
+                    description: '응답 코드, 0000 -> 정상, xxxx -> 비정상'
+                    example: '0000'
+                  RSLT_MSG:
+                    description: 에러 메세지
+                    type: string
+                    example: ''
+                  PAY_REC:
+                    description: 빌링에 사용되는 값을 의미함.
+                    format: object
+                    properties:
+                      USER_ID:
+                        type: string
+                        description: KT Cloud 유저 아이디
+                      GUBUN:
+                        type: string
+                        description: 결제에 사용된 [Lite/Standard] 등의 구분값으로 [1,2] 사용
+                      AMT:
+                        type: number
+                        description: 특정 기간동안 사용한 금액 
+                      DESC:
+                        type: array
+                        description: 계산된 금액에 대한 처리 사유
+                        properties:
+                          USER_CNT:
+                            type: number
+                            description: 해당 일 유저 수
+                          START_DT:
+                            type: string
+                            description: 결제 시작 데이터 format yyyymmdd
+                          END_DT:
+                            type: string
+                            description: 결제 종료 데이터 format yyyymmdd
+                          AMT:
+                            description: '결제 금액 / 일별'
+                            type: number
+                          CALC:
+                            type: string
+                            description: '결제 식 : 인원 * 기간 * 금액 / 월 날짜 '
+                    example:
+                      - USER_ID: '****@gmail.com'
+                        AMT: 87859
+                        GUBUN: 1
+                        FREE_PERIOD : '20201201-20210101'
+                        DESC:
+                          - USER_CNT: 30
+                            START_DT: '20210201'
+                            END_DT: '20210202'
+                            CALC: 30 * 6000 * 2 / 28
+                            AMT: 12858
+                          - USER_CNT: 15
+                            START_DT: '20210203'
+                            END_DT: '20210212'
+                            CALC: 15 * 6000 * 10 / 28
+                            AMT: 32143
+                          - USER_CNT: 10
+                            START_DT: '20210213'
+                            END_DT: '20210220'
+                            CALC: 10 * 6000 * 8 / 28
+                            AMT: 17143
+                          - USER_CNT: 15
+                            START_DT: '20210221'
+                            END_DT: '20210228'
+                            CALC: 15 * 6000 * 8 / 28
+                            AMT: 25715
+                      - USER_ID: test2@gmail.com
+                        AMT: 87859
+                        GUBUN: 1
+                        FREE_PERIOD : '20201101-20201201'
+                        DESC:
+                          - USER_CNT: 30
+                            START_DT: '20210201'
+                            END_DT: '20210202'
+                            CALC: 30 * 6000 * 2 / 28
+                            AMT: 12858
+                          - USER_CNT: 15
+                            START_DT: '20210203'
+                            END_DT: '20210212'
+                            CALC: 15 * 6000 * 10 / 28
+                            AMT: 32143
+                          - USER_CNT: 10
+                            START_DT: '20210213'
+                            END_DT: '20210220'
+                            CALC: 10 * 6000 * 8 / 28
+                            AMT: 17143
+                          - USER_CNT: 15
+                            START_DT: '20210221'
+                            END_DT: '20210228'
+                            CALC: 15 * 6000 * 8 / 28
+                            AMT: 25715                          
