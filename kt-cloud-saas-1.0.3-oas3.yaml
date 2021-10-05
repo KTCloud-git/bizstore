@@ -46,12 +46,37 @@ paths:
                 $ref: '#/components/schemas/Status'
         default:
           description: 예상못한 에러
+    put:
+      tags:
+      - status-management
+      summary: 상태 변경
+      description: ncc에서 Cloud 포털의 상태(status)를 변경
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - "status"
+              properties:
+                "status" :
+                  type: string
+                  example : ("신청 불가","고객 정보 생성 중","사용자 SW설치 중","템플릿 생성 중","VDI 배포 중","사용 중","변경 접수 중")
+      responses:
+        default:
+          $ref : '#/components/responses'
   /customers/{email}:
     post:
       tags:
       - customer-management
       summary: 서비스 신청, SSO 연동 관련 API.
-      description: 고객정보를 연동대상시스템으로 전달하여 서비스 신청.
+      description: 고객정보를 연동대상시스템으로 전달하여 서비스 신청. 사용자 포탈에서 보여지는 status값은 "신청 접수 중"
       requestBody:
         content:
           application/json:
@@ -64,7 +89,7 @@ paths:
       tags:
       - modify-management
       summary: 서비스 변경
-      description: 최대 VM수 변경 요청
+      description: 최대 VM수 변경 요청. 사용자 포탈에서 보여지는 status값은 "변경 접수 중"
       parameters:
         - name: "email"
           in: path
@@ -266,10 +291,38 @@ components:
           description: 서비스 시작일
           format: yyyymmdd
           example: 20210818
+        classification:
+            type: string
+            description: 상용과 POC 구분 "Commercial, POC"
+            example: "POC"
+        configuration:
+            type: string
+            description: 구성정보로 Pool이나 Dedicated로 표현. 
+            example: "Pool"
+        connect:
+            type: string
+            description: VM접속 방법 "외부망(SSL), 외부 인터넷망(HTTPS), 내부망(INSIDE)"
+            example: "HTTPS"
+        max-amount:
+            type: integer
+            description: 생성 가능한 최대 VM 수(동시접속 VM 수)
+            example: 150
+        additional-disk:
+            type: string
+            description: 추가 디스크 "OS/10G, Data/20G"
+            example: "OS/10G"
+        company-name:
+            type: string
+            description: 회사명
+            example: "KT"
+        company-code:
+            type: string
+            description: 회사 코드
+            example: "ktc"
         status:
           type: string
           description: 현재 사용 여부 회신
-          example: ("신청 접수 중","신청 불가","고객 정보 생성 중","사용자 SW설치 중","템플릿 생성 중","VDI 배포 중","사용 중")
+          example: ("신청 접수 중","신청 불가","고객 정보 생성 중","사용자 SW설치 중","템플릿 생성 중","VDI 배포 중","사용 중","변경 접수 중")
         location:
           type: string
           description: 고객이 기업DaaS에 접속하기 위한 URL 
