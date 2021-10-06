@@ -131,6 +131,22 @@ paths:
       responses:
         default:
           $ref : '#/components/responses'
+  /customers/{file}:
+    post:
+      tags:
+      - file-management
+      summary: 파일 전송
+      description: 서비스 신청 시, 엑셀 파일을 ncc로 전송하기 위한 커맨드(서비스 신청 커맨드와 병행)
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              description: excel file(서비스 신청 팝업에서 업로드 하는 사용자 등록 엑셀 파일)
+              format: binary
+      responses:
+        default:
+          $ref : '#/components/responses'
   /bill-list/{bill-date}:
     get:
       tags:
