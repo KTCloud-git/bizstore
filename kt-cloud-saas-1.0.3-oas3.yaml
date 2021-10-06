@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  title: 고객 신청/탈퇴/과금정보 조회 API
+  title: 고객 신청/서비스 페이지로의 Redirect/탈퇴/과금정보 조회 API
   version: 1.0.4
   description: |
     server url 변경(2021.03.16), '/OpenGate로 요청 전송 부탁드립니다. /OpenGate 뒤의 Path의 경우 예시를 위해 만들어놓은 값입니다. 
