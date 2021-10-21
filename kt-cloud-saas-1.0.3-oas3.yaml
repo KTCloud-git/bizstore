@@ -1,14 +1,14 @@
 ---
 openapi: 3.0.3
 info:
-  title: KT Cloud Bizstore KT DaaS 서비스 API
+  title: KT Cloud 기업 DaaS 서비스 API
   description: SSL 인증으로 진행합니다. 
-  version: 3.0.1
+  version: 1.0.0
 servers:
 - url: https://연동대상시스템의 URL
-  description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템의 IP는 하나로 지정하여 통신합니다.
+  description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템은 기업 DaaS입니다.
 paths:
-  /status/:
+  /api/status/:
     get:
       tags:
       - status-management
@@ -23,19 +23,18 @@ paths:
                 $ref: '#/components/schemas/Statuses'
         default:
           description: 예상못한 에러
-  /status/{email}:
+  /api/status/{email}:
     get:
       tags:
       - status-management
       summary: 서비스 상태값 조회
-      description: 고객의 서비스 상태값 조회
+      description: 해당 고객의 서비스 상태값 조회
       parameters:
         - name: "email"
           in: path
           required: true
           schema:
             type: string
-            description: 개별 이메일을 조회할 때는 "email 주소"를 넣고, 전체 이메일을 조회할 때는 "all"을 넣습니다.
             example : test@kt.com
       responses:
         "200":
@@ -46,11 +45,83 @@ paths:
                 $ref: '#/components/schemas/Status'
         default:
           description: 예상못한 에러
-    put:
+  /api/status/vm/:
+    get:
       tags:
-      - status-management
-      summary: 상태 변경
-      description: ncc에서 Cloud 포털의 상태(status)를 변경
+      - status-vm-management
+      summary: (추후 개발건/ 현재는 개발 안하셔도 됩니다.)vm상태 조회
+      description: 전체 고객의 vm상태 조회
+      responses:
+        "200":
+          description: 유효한 요청에 대한 올바른 응답
+          content:
+            application/json:
+              schema:
+                properties:
+                  "vm-status" :
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Vm'
+        default:
+          description: 예상못한 에러
+  /api/status/vm/{email}:
+    get:
+      tags:
+      - status-vm-management
+      summary: (추후 개발건/ 현재는 개발 안하셔도 됩니다.)vm상태 조회
+      description: cloud 포탈 고객(email) 별 vm상태 조회
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      responses:
+        "200":
+          description: 유효한 요청에 대한 올바른 응답
+          content:
+            application/json:
+              schema:
+                properties:
+                  "vm-status" :
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Vm'
+        default:
+          description: 예상못한 에러
+  /api/status/user/:
+    get:
+      tags:
+      - status-user-management
+      summary: (추후 개발건/ 현재는 개발 안하셔도 됩니다.)관리센터에서 메일 발송을 위한 이메일 조회 api
+      description: vdi를 사용하고 있는 전체 고객 이메일 조회
+      responses:
+        "200":
+          description: 유효한 요청에 대한 올바른 응답
+          content:
+            application/json:
+              schema:
+                properties:
+                  "manager" :
+                    type: string
+                    description: 고객 관리자(중간 관리자) 이메일
+                    example : "honggildong@kt.com"
+                  "vdi-user" :
+                    type: array
+                    description: 고객 관리자(중간 관리자) 아래의 일반 vdi 사용자
+                    items:
+                      type: string
+                      example: ["test01@kt.com", "test02@kt.com", "test03@kt.com"]
+                    
+        default:
+          description: 예상못한 에러
+  /api/customers/{email}:
+    post:
+      tags:
+      - customer-management
+      summary: 서비스 신청, SSO 연동 관련 API.
+      description: 고객정보를 연동대상시스템으로 전달하여 서비스 신청. 사용자 포탈에서 보여지는 status값은 "신청 접수 중", 그리고 메일 방송.md 파일 참고하여 수신자에게 메일 발송
       parameters:
         - name: "email"
           in: path
@@ -62,33 +133,14 @@ paths:
         content:
           application/json:
             schema:
-              required:
-                - "status"
-              properties:
-                "status" :
-                  type: string
-                  example : ("신청 불가","고객 정보 생성 중","사용자 SW설치 중","템플릿 생성 중","VDI 배포 중","사용 중","변경 접수 중")
-      responses:
-        default:
-          $ref : '#/components/responses'
-  /customers/{email}:
-    post:
-      tags:
-      - customer-management
-      summary: 서비스 신청, SSO 연동 관련 API.
-      description: 고객정보를 연동대상시스템으로 전달하여 서비스 신청. 사용자 포탈에서 보여지는 status값은 "신청 접수 중"
-      requestBody:
-        content:
-          application/json:
-            schema:
               $ref: '#/components/schemas/Customer'
       responses:
         default:
           $ref : '#/components/responses'
     put:
       tags:
-      - modify-management
-      summary: 서비스 변경
+      - customer-management
+      summary: (추후 개발건/ 현재는 개발 안하셔도 됩니다.)서비스 변경
       description: 최대 VM수 변경 요청. 사용자 포탈에서 보여지는 status값은 "변경 접수 중"
       parameters:
         - name: "email"
@@ -119,8 +171,8 @@ paths:
     delete:
       tags:
       - customer-management
-      summary: 고객 탈퇴
-      description: 고객 탈퇴처리를 위해 email에 해당하는 고객을 전달합니다.
+      summary: (추후 개발건/ 현재는 개발 안하셔도 됩니다.)고객 탈퇴
+      description: 고객 탈퇴처리를 위해 email에 해당하는 고객을 전달합니다. 이때, 해당 email의 vm이 0일때만 가능합니다, 그리고 메일 발송.md 파일 참고하여 수신자에게 메일 발송
       parameters:
         - name: "email"
           in: path
@@ -131,81 +183,6 @@ paths:
       responses:
         default:
           $ref : '#/components/responses'
-  /customers/{file}:
-    post:
-      tags:
-      - file-management
-      summary: 파일 전송
-      description: 서비스 신청 시, 엑셀 파일을 ncc로 전송하기 위한 커맨드(서비스 신청 커맨드와 병행)
-      requestBody:
-        content:
-          application/octet-stream:
-            schema:
-              type: string
-              description: excel file(서비스 신청 팝업에서 업로드 하는 사용자 등록 엑셀 파일)
-              format: binary
-      responses:
-        default:
-          $ref : '#/components/responses'
-  /bill-list/{bill-date}:
-    get:
-      tags:
-      - billing-management
-      summary: 날짜별 사용정보 조회
-      description: "bill-data까지의 사용량 정보를 얻기 위한 API 입니다."
-      parameters:
-      - name: bill-date
-        in: path
-        description: "해당 일의 사용 정보 회신, ex) 2021-08-20 이면, 2021-08-20 00:00 ~ 23:59 의, 사용량 회신(VM 이름, 해당 VM의 2021-08-20 00:00 ~ 23:59 동안의 사용시간), 
-        이렇게 되면, 고객이 2021-08-01에서 2021-08-02까지 사용을 했을 때 일할 계산을 한다고 하면. 
-        08-01의 VM 사용 수와 08-02의 VM 사용 수를 2(01 ~ 02 2일 썼으니...)로 나누고, 
-        '2일/31일(8월은 31일까지 있음.)'을 곱한 후 VM 당 월 단가를 곱하여 과금. 단, 소수점 1째자리는 사사오입을 한다.(1954년 사사오입 개헌으로 대한민국 표준임...)
-        또한, 당일 조회하는 경우 해당 시간까지의 사용량 전달"
-        required: true
-        schema:
-          type: string
-          format: yyyymmdd
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Bills'
-        default:
-          $ref: '#/components/responses'
-  /bill-list/{bill-date}/{email}:
-    get:
-      tags:
-      - billing-management
-      summary: 사용자별 과금정보 조회
-      description: 특정 고객에 대한 가입일부터 현재까지의 각 일별로 과금 정보를 회신합니다.
-      parameters:
-      - name: bill-date
-        in: path
-        description: "해당 일의 사용 정보 회신, ex) 2021-08-20 이면, 2021-08-20 00:00 ~ 23:59 의, 사용량 회신(VM 이름, 해당 VM의 2021-08-20 00:00 ~ 23:59 동안의 사용시간), 
-        이렇게 되면, 고객이 2021-08-01에서 2021-08-02까지 사용을 했을 때 일할 계산을 한다고 하면. 
-        08-01의 VM 사용 수와 08-02의 VM 사용 수를 2(01 ~ 02 2일 썼으니...)로 나누고, 
-        '2일/31일(8월은 31일까지 있음.)'을 곱한 후 VM 당 월 단가를 곱하여 과금. 단, 소수점 1째자리는 사사오입을 한다.(1954년 사사오입 개헌으로 대한민국 표준임...)
-        또한, 당일 조회하는 경우 해당 시간까지의 사용량 전달"
-        required: true
-        schema:
-          type: string
-          format: yyyymmdd
-      - name: email
-        in: path
-        schema:
-          type: string
-          format: yyyymmdd
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Bill'
-        default:
-          $ref: '#/components/responses'
 components:
   schemas:
     Customer:
@@ -213,7 +190,7 @@ components:
       properties:
         email:
           type: string
-          description: 고객식별 정보 
+          description: 고객식별 정보(kt cloud 포탈 계정)
           example: "honggildong@kt.com"
         business-name:
             type: string
@@ -227,26 +204,30 @@ components:
             type: string
             description: 상용과 POC 구분 "Commercial, POC"
             example: "POC"
-        configuration:
-            type: string
-            description: 구성정보로 Pool이나 Dedicated로 표현. 
-            example: "Pool"
-        connect:
-            type: string
-            description: VM접속 방법 "외부망(SSL), 외부 인터넷망(HTTPS), 내부망(INSIDE)"
-            example: "HTTPS"
         spec:
             type: string
             description: Spec 정보를 의미함. 2vCore x 4GB, 4vCore x 8GB, 8vCore x 16GB 중 1개(요금제에 따라서 결정됨.) 
             example: "4vCore x 8GB"
-        max-amount:
-            type: integer
-            description: 생성 가능한 최대 VM 수(동시접속 VM 수)
-            example: 150
         additional-disk:
             type: string
             description: 추가 디스크 "OS/10G, Data/20G"
             example: "OS/10G"
+        configuration:
+            type: string
+            description: 구성정보로 Pool이나 Dedicated로 표현. 
+            example: "Pool"
+        max-amount:
+            type: integer
+            description: 생성 가능한 최대 VM 수(동시접속 VM 수)
+            example: 150
+        agreement:
+            type: string
+            description: 약정기간. "0" 무약정 / "1" 1년약정 / "3" 3년약정
+            example: "1"
+        connect:
+            type: string
+            description: VM접속 방법 "외부망(SSL), 외부 인터넷망(HTTPS), 내부망(INSIDE)"
+            example: "HTTPS"
         domain:
             type: string
             description: 접속 도메인 ex)ucloud.ktvdi.co.kr
@@ -259,35 +240,62 @@ components:
             type: string
             description: 회사 코드
             example: "ktc"
-    Bills:
-      type: array
-      items:
-        $ref: '#/components/schemas/Bill'
-    Bill:
-      required:
-      - bill-date
-      - email
-      - vm-status
-      properties:
-        bill-date:
-          type: string
-          format: yyyy-mm-dd
-        email:
-          type: string
-          example: honggildong@kt.com
-        vm-status:
-          type: array
-          items:
-            $ref: '#/components/schemas/Vm'
-    Vm:
-      type: object
-      properties:
-        vm-name:
-          type: string
-          example: "NC0101"
-        vm-spec:
-          type: string 
-          example: "2vCore x 4GB"
+        manager-id:
+            type: string
+            description: 고객 관리자 id
+            example: "ktucloud01"
+        client-ststem:
+            type: string
+            description: 고객 업무시스템 연동. "IN" 내부망(외부망 접속 원천 차단) / "IN AND OUT" (내부망 및 외부 인터넷 제한적 오픈) / "OUT" (외부 인터넷(Any Open))
+            example: "IN AND OUT"
+        daas-to-client:
+            type: array
+            description: DaaS(고객VM) -> 업무시스템 방화벽 정책
+            items:
+              type: object
+              properties:
+                destination:
+                  type: string
+                  description: 도착지 IP
+                  example: "172.200.0.0"
+                port:
+                  type: integer
+                  description: 포트
+                  example: 20443
+                port-info:
+                  type: string
+                  description: 포트용도
+                  example: "채팅 상담 관리자 사이트 접속 포트"
+        client-to-daas:
+            type: array
+            description: 업무시스템 -> DaaS(고객VM) 방화벽 정책
+            items:
+              type: object
+              properties:
+                source:
+                  type: string
+                  description: 출발지 IP
+                  example: "10.200.0.0"
+                port:
+                  type: integer
+                  description: 포트
+                  example: 20443
+                port-info:
+                  type: string
+                  description: 포트용도
+                  example: "채팅 상담 관리자 사이트 접속 포트"
+        security-control:
+            type: string
+            description: (부가서비스) DaaS보안관제 서비스. 신청시 "O" 신청안할시 "X"
+            example: "O"
+        security-control-report:
+            type: string
+            description: (부가서비스) 월간 관제 보고서 서비스. 신청시 "O" 신청안할시 "X"
+            example: "O"
+        managed-service:
+            type: string
+            description: (부가서비스) DaaS매니지드 서비스. 신청시 "O" 신청안할시 "X"
+            example: "X"
     Statuses:
       type: array
       items:
@@ -297,56 +305,50 @@ components:
       properties:
         email:
           type: string
-          description: 고객 식별정보
+          description: 고객 식별정보(kt cloud 포탈 계정), 해당 메일로 서비스 신청 프로세스에 대한 메일 전송
           example: "honggildong@kt.com"
-        reg-date:
-          description: 고객 신청일
-          format: yyyymmdd
-          example: 20210428
-        start-date:
-          description: 서비스 시작일
-          format: yyyymmdd
-          example: 20210818
-        classification:
-            type: string
-            description: 상용과 POC 구분 "Commercial, POC"
-            example: "POC"
-        configuration:
-            type: string
-            description: 구성정보로 Pool이나 Dedicated로 표현. 
-            example: "Pool"
-        connect:
-            type: string
-            description: VM접속 방법 "외부망(SSL), 외부 인터넷망(HTTPS), 내부망(INSIDE)"
-            example: "HTTPS"
-        max-amount:
-            type: integer
-            description: 생성 가능한 최대 VM 수(동시접속 VM 수)
-            example: 150
-        additional-disk:
-            type: string
-            description: 추가 디스크 "OS/10G, Data/20G"
-            example: "OS/10G"
         company-name:
             type: string
             description: 회사명
             example: "KT"
-        company-code:
-            type: string
-            description: 회사 코드
-            example: "ktc"
+        max-amount:
+            type: integer
+            description: 생성 가능한 최대 VM 수(동시접속 VM 수)
+            example: 150
+        current-vdi-amount:
+            type: integer
+            description: 현재 구축 완료된 vdi 수 / 프로세스 UI에서 VDI배포 중 -> 사용 중으로 전환을 위한 확인에 사용
+            example: 130
         status:
           type: string
           description: 현재 사용 여부 회신
           example: ("신청 접수 중","신청 불가","고객 정보 생성 중","사용자 SW설치 중","템플릿 생성 중","VDI 배포 중","사용 중","변경 접수 중")
-        location:
+    Vm:
+      type: object
+      properties:
+        user-email:
           type: string
-          description: 고객이 기업DaaS에 접속하기 위한 URL 
-          example: honggildong.vdi.kt.com
-        announceMail:
+          description: 실제 vdi를 사용하고 있는 고객 식별 
+          example: "honggildong@kt.com"
+        vm-name:
           type: string
-          description: location과 DaaS 구축이 완료되었을때 공지를 수신하는 메일
-          example: honggildong@kt.com
+          example: "NC0101"
+        vm-spec:
+          type: string 
+          example: "2vCore x 4GB"
+        user-id:
+          type: string
+          example: "ktc_test01"
+        user-name:
+          type: string
+          example: "홍길동"
+        user-phone:
+          type: string
+          example: "010-1234-5678"
+        user-department:
+          type: string
+          description: 부서코드
+          example: "CPD"
   responses:
     "200":
       description: 성공, OK, 유효한 요청에 대한 예상된 응답
