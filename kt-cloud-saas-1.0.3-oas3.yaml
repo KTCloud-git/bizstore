@@ -192,14 +192,6 @@ components:
           type: string
           description: 고객식별 정보(kt cloud 포탈 계정)
           example: "honggildong@kt.com"
-        business-name:
-            type: string
-            description: 사업자 이름
-            example: "삼성"
-        business-num:
-            type: string 
-            description: 사업자 번호 
-            example: "123-345-2345"
         classification:
             type: string
             description: 상용과 POC 구분 "Commercial, POC"
