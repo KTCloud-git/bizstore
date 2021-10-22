@@ -244,7 +244,7 @@ components:
             type: string
             description: 고객 관리자 id
             example: "ktucloud01"
-        client-ststem:
+        client-system:
             type: string
             description: 고객 업무시스템 연동. "IN" 내부망(외부망 접속 원천 차단) / "IN AND OUT" (내부망 및 외부 인터넷 제한적 오픈) / "OUT" (외부 인터넷(Any Open))
             example: "IN AND OUT"
