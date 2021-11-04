@@ -1,1 +1,370 @@
-
+---
+openapi: 3.0.3
+info:
+  title: KT Cloud 기업 DaaS 서비스 API
+  description: SSL 인증으로 진행합니다. 
+  version: 1.0.0
+servers:
+- url: https://연동대상시스템의 URL
+  description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템은 기업 DaaS입니다.
+paths:
+  /api/status/:
+    get:
+      tags:
+      - status-management
+      summary: 서비스 상태값 조회
+      description: 전체 고객에 대한 상태값 조회
+      responses:
+        "200":
+          description: 유효한 요청에 대한 올바른 응답
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statuses'
+        default:
+          description: 예상못한 에러
+  /api/status/{email}:
+    get:
+      tags:
+      - status-management
+      summary: 서비스 상태값 조회
+      description: 해당 고객의 서비스 상태값 조회
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      responses:
+        "200":
+          description: 유효한 요청에 대한 올바른 응답
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        default:
+          description: 예상못한 에러
+  /api/status/all-email/:
+    get:
+      tags:
+      - status-user-management
+      summary: 관리센터에서 메일 발송을 위한 이메일 조회 api(전체공지)
+      description: 기업DaaS를 이용하는 모든 user의 email을 회신
+      responses:
+        "200":
+          description: 유효한 요청에 대한 올바른 응답
+          content:
+            application/json:
+              schema:
+                properties:
+                  "user-email" :
+                    type: array
+                    description: 모든 user의 이메일
+                    items:
+                      example: "test01@kt.com"
+        default:
+          $ref : '#/components/responses'
+  /api/status/all-email/{email}:
+    get:
+      tags:
+      - status-user-management
+      summary: 관리센터에서 메일 발송을 위한 이메일 조회 api(해당 계정 공지)
+      description: kt cloud 포털 계정에 대한 모든 user의 email을 회신
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      responses:
+        "200":
+          description: 유효한 요청에 대한 올바른 응답
+          content:
+            application/json:
+              schema:
+                properties:
+                  "account-email" :
+                    type: array
+                    description: kt cloud 포털 계정에 대한 모든 user의 이메일
+                    items:
+                      example: "test01@kt.com"
+        default:
+          $ref : '#/components/responses'
+  /api/status/email/manager/{email}:
+    get:
+      tags:
+      - status-user-management
+      summary: 관리센터에서 메일 발송을 위한 이메일 조회 api(특정 사용자 공지)
+      description: kt cloud 포털 계정에 대한 고객 관리자 email을 회신
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      responses:
+        "200":
+          description: 유효한 요청에 대한 올바른 응답
+          content:
+            application/json:
+              schema:
+                properties:
+                  "manager-email" :
+                    type: array
+                    description: kt cloud 포털 계정에 대한 고객 관리자(중간 관리자) 이메일
+                    items:
+                      example: "test01@kt.com"
+        default:
+          $ref : '#/components/responses'
+  /api/status/email/general/{email}:
+    get:
+      tags:
+      - status-user-management
+      summary: 관리센터에서 메일 발송을 위한 이메일 조회 api(특정 사용자 공지)
+      description: kt cloud 포털 계정에 대한 일반 사용자 email을 회신
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      responses:
+        "200":
+          description: 유효한 요청에 대한 올바른 응답
+          content:
+            application/json:
+              schema:
+                properties:
+                  "general-email" :
+                    type: array
+                    description: kt cloud 포털 계정에 대한 일반 사용자 이메일
+                    items:
+                      example: "test01@kt.com"
+        default:
+          $ref : '#/components/responses'
+  /api/customers/{email}:
+    post:
+      tags:
+      - customer-management
+      summary: 서비스 신청, SSO 연동 관련 API.
+      description: 고객정보를 연동대상시스템으로 전달하여 서비스 신청. 사용자 포탈에서 보여지는 status값은 "신청 접수 중", 그리고 메일 방송.md 파일 참고하여 수신자에게 메일 발송
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        default:
+          $ref : '#/components/responses'
+    put:
+      tags:
+      - customer-management
+      summary: 서비스 변경
+      description: 최대 VM수 변경 요청. 사용자 포탈에서 보여지는 status값은 "변경 접수 중"
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - "max-amount"
+              properties:
+                "max-amount" :
+                  type: integer
+                  example : 150
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: 만약 현재 최대VM수가 100개이고 사용자가 VM을 100개 생성한 시점에서 80개로 변경하려고 할 때
+                       400 error와 함께 '현재 VM의 수가 변경할 최대 VM의 수 보다 많습니다'로 응답.
+                       동일하게 30개 미만으로 변경 시 400 error와 함께 '최소 변경 가능한 VM수는 30개 입니다.'로 응답
+        default:
+          $ref: '#/components/responses'
+    delete:
+      tags:
+      - customer-management
+      summary: 고객 탈퇴
+      description: 고객 탈퇴처리를 위해 email에 해당하는 고객을 전달합니다. 이때, 해당 email의 vm이 0일때만 가능합니다, 그리고 메일 발송.md 파일 참고하여 수신자에게 메일 발송
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      responses:
+        default:
+          $ref : '#/components/responses'
+components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        email:
+          type: string
+          description: 고객식별 정보(kt cloud 포탈 계정)
+          example: "honggildong@kt.com"
+        classification:
+            type: string
+            description: 상용과 POC 구분 "Commercial, POC"
+            example: "POC"
+        spec:
+            type: string
+            description: Spec 정보를 의미함. 2vCore x 4GB, 4vCore x 8GB, 8vCore x 16GB 중 1개(요금제에 따라서 결정됨.) 
+            example: "4vCore x 8GB"
+        additional-disk:
+            type: string
+            description: 추가 디스크 "OS/10G, Data/20G"
+            example: "OS/10G"
+        configuration:
+            type: string
+            description: 구성정보로 Pool이나 Dedicated로 표현. 
+            example: "Pool"
+        max-amount:
+            type: integer
+            description: 생성 가능한 최대 VM 수(동시접속 VM 수)
+            example: 150
+        agreement:
+            type: string
+            description: 약정기간. "0" 무약정 / "1" 1년약정 / "3" 3년약정
+            example: "1"
+        connect:
+            type: string
+            description: VM접속 방법 "외부망(SSL), 외부 인터넷망(HTTPS), 내부망(INSIDE)"
+            example: "HTTPS"
+        domain:
+            type: string
+            description: 접속 도메인 ex)ucloud.ktvdi.co.kr
+            example: "ucloud"
+        company-name:
+            type: string
+            description: 회사명
+            example: "KT"
+        company-code:
+            type: string
+            description: 회사 코드
+            example: "ktc"
+        manager-id:
+            type: string
+            description: 고객 관리자 id
+            example: "ktucloud01"
+        client-system:
+            type: string
+            description: 고객 업무시스템 연동. "IN" 내부망(외부망 접속 원천 차단) / "IN AND OUT" (내부망 및 외부 인터넷 제한적 오픈) / "OUT" (외부 인터넷(Any Open))
+            example: "IN AND OUT"
+        daas-to-client:
+            type: array
+            description: DaaS(고객VM) -> 업무시스템 방화벽 정책
+            items:
+              type: object
+              properties:
+                destination:
+                  type: string
+                  description: 도착지 IP
+                  example: "172.200.0.0"
+                port:
+                  type: integer
+                  description: 포트
+                  example: 20443
+                port-info:
+                  type: string
+                  description: 포트용도
+                  example: "채팅 상담 관리자 사이트 접속 포트"
+        client-to-daas:
+            type: array
+            description: 업무시스템 -> DaaS(고객VM) 방화벽 정책
+            items:
+              type: object
+              properties:
+                source:
+                  type: string
+                  description: 출발지 IP
+                  example: "10.200.0.0"
+                port:
+                  type: integer
+                  description: 포트
+                  example: 20443
+                port-info:
+                  type: string
+                  description: 포트용도
+                  example: "채팅 상담 관리자 사이트 접속 포트"
+        fw-security-control:
+            type: string
+            description: (부가서비스) 방화벽 보안관제 서비스. 신청시 "O" 신청안할시 "X"
+            example: "O"
+        ips-security-control:
+            type: string
+            description: (부가서비스) IPS 보안관제 서비스. 신청시 "O" 신청안할시 "X"
+            example: "O"
+        security-control-report:
+            type: string
+            description: (부가서비스) 월간 관제 보고서 서비스. 신청시 "O" 신청안할시 "X"
+            example: "O"
+        managed-service:
+            type: string
+            description: (부가서비스) DaaS매니지드 서비스. 신청시 "O" 신청안할시 "X"
+            example: "X"
+    Statuses:
+      type: array
+      items:
+        $ref: '#/components/schemas/Status'
+    Status:
+      type: object
+      properties:
+        email:
+          type: string
+          description: 고객 식별정보(kt cloud 포탈 계정), 해당 메일로 서비스 신청 프로세스에 대한 메일 전송
+          example: "honggildong@kt.com"
+        company-name:
+            type: string
+            description: 회사명
+            example: "KT"
+        max-amount:
+            type: integer
+            description: 생성 가능한 최대 VM 수(동시접속 VM 수)
+            example: 150
+        current-vdi-amount:
+            type: integer
+            description: 현재 구축 완료된 vdi 수 / 프로세스 UI에서 VDI배포 중 -> 사용 중으로 전환을 위한 확인에 사용
+            example: 130
+        status:
+          type: string
+          description: 현재 사용 여부 회신
+          example: ("신청 접수 중","신청 불가","고객 정보 생성 중","사용자 SW설치 중","템플릿 생성 중","VDI 배포 중","사용 중","변경 접수 중")
+  responses:
+    "200":
+      description: 성공, OK, 유효한 요청에 대한 예상된 응답
+    "201":
+      description: 성공, Created, 자원 생성 완료
+    "202":
+      description: 성공, Accepted, 시간 지연
+    "400":
+      description: 실패, Bad request, 상세한 실패 원인 회신 할 것.
+    "401":
+      description: 실패, Unauthorized, 유저 권한 없음
+    "403":
+      description: 실패, Forbidden, 유저 권한 문제
+    "404":
+      description: 실패, Not Found, 찾지 못함.
+    "405":
+      description: 실패, Method not allowed, Request의 endpoint와 resource가 유효하지 않음.
+    "406":
+      description: 실패, 무료체험 고객
