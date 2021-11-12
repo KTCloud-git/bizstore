@@ -1,7 +1,7 @@
 ---
 openapi: 3.0.3
 info:
-  title: KT Cloud Bizstore 서비스 API
+  title: KT Cloud BizOffice 서비스 API
   version: 2.1.2
 servers:
 - url: https://연동대상시스템의 URL
@@ -24,7 +24,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responses
+                $ref: '#/components/schemas/responses'
   /customers/:
     post:
       tags:
@@ -41,7 +41,7 @@ paths:
           description: Redirect
           headers:
             Location:
-              description: 앞으로 고객이 접속할 페이지 
+              description: "앞으로 고객이 접속할 페이지"
               schema:
                 type: string
                 format: uri
@@ -49,7 +49,150 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responses   
+                $ref: '#/components/schemas/responses'   
+    
+    /customer/change-status/:
+      put:
+        tags:
+        - customer-management
+        summary: 이용 정지
+        description: 고객의 이용 상태 변경에 대한 처리를 함. 
+        requestBody:
+          content:
+            "application/json":
+              schema:
+                required:
+                  - "e-mail"
+                  - "status"
+                properties:
+                  e-mail:
+                    type: string
+                    example: honggildong@kt.com
+                  status:
+                    type: string
+                    enum: ["이용재개", "이용중지"]
+        response:
+          "200":
+            description: "정상 응답"
+            content:
+              "application/json":
+                schema:
+                  required:
+                    - "result"
+                    - "description"
+                  properties:
+                    result:
+                      type: enum
+                      enum: ["succeed","fail"]
+                    description:
+                      type: string
+                      example: "ㅇㅇㅇ가 잘못되었습니다. 상세하게 표현할 것."
+    /customer/change-service/:
+      put:
+        tags:
+        - customer service management
+        summary: 서비스 변경 
+        description: 고객이 소유한 서비스를 변경하도록 함. 
+        requestBody:
+          content:
+            "application/json":
+              schema:
+                required:
+                  - "e-mail"
+                  - "countOfId"
+                  - "sizeOfSharedStorage"
+                  - "sizeOfMail"
+                properties:
+                  e-mail:
+                    type: string
+                    example: honggildong@kt.com
+                  countOfId:
+                    type: integer
+                    description: 단위는 갯수
+                  sizeOfSharedStorage:
+                    type: integer
+                    description: 단위는 Giga byte
+                  sizeOfMail:
+                    type: integer
+                    description: 단위는 Giga byte
+        response:
+          "200":
+            description: "정상 응답"
+            exmaple: {
+                        "result":"true",
+                        "description":
+                          {
+                            "id":
+                            {
+                              "isChanged":"true",
+                              "amount":20
+                            },
+                            "sharedStorage":
+                            {
+                              "isChanged":"true",
+                              "amount":20
+                            },
+                            "mailStorage":
+                            {
+                              "isChanged":"true",
+                              "amount":20
+                            }
+                          }
+            }
+            content:
+              "application/json":
+                schema:
+                  required:
+                    - "result"
+                    - "description"
+                  properties:
+                    result:
+                      type: enum
+                      enum: ["succeed","fail"]
+                    description:
+                      type: object
+                      required:
+                        - id
+                        - sharedStorage
+                        - mailStorage
+                      properties:
+                        id:
+                          type: object
+                          required:
+                            - isChanged
+                            - amount
+                          properties:
+                            isChanged:
+                              type: string
+                              enum: ["true", "false"]
+                            amount:
+                              type: integer
+                              description: 변경 분량
+                        sharedStorage:
+                          type: object
+                          required:
+                            - isChanged
+                            - amount
+                          properties:
+                            isChanged:
+                              type: string
+                              enum: ["true", "false"]
+                            amount:
+                              type: integer
+                              description: 변경 분량
+                        mailStorage:
+                          type: object
+                          required:
+                            - isChanged
+                            - amount
+                          properties:
+                            isChanged:
+                              type: string
+                              enum: ["true", "false"]
+                            amount:
+                              type: integer
+                              description: 변경 분량
+                      
     delete:
       tags:
       - customer-management
@@ -70,7 +213,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responses   
+                $ref: '#/components/schemas/responses'   
   /bill-list/date/{bill-date}:
     get:
       tags:
