@@ -345,6 +345,10 @@ components:
             type: integer
             description: 현재 구축 완료된 vdi 수 / 프로세스 UI에서 VDI배포 중 -> 사용 중으로 전환을 위한 확인에 사용
             example: 130
+        user-amount:
+            type: integer
+            description: 모든 고객 수(고객 관리자와 일반 유저 모두 포함)
+            example: 200
         status:
           type: string
           description: 현재 사용 여부 회신
