@@ -98,17 +98,18 @@ paths:
           "application/json":
             schema:
               required:
-                - "email"
+                - "mem-sq"
               properties:
-                "email" :
+                "mem-sq" :
                   type: string
-                  example : test@kt.com
+                  example : M12345
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
+                type: array
                 $ref: '#/components/schemas/Bill'
         default:
           $ref: '#/components/responses'
@@ -130,28 +131,73 @@ components:
           description: 고객 전화 번호
           example: 111-111-2222
         license-info:
-          type: string
-          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
-          example: "2"
-          enum: [2,3,4,5]
+          type: integer
+          description: 8,000원으로 고정함.
+          example: "8000"
+        license-count:
+          type: integer
+          description : 사용자수, 사용자가 200명이면 200명으로 기입하여 전달함.
+          example: "100"
         contract-discount-period:
           type: string
-          description: 약정할인 기간(시작일~종료일)
+          description: 약정할인 기간(시작일~종료일) / 약정없을 경우 신청일 1일로 표시함.
           format: yyyymmdd~yyyymmdd
-          example: 20210301~202010501
+          example: 20211115~20211115
         contract-discount-percentage:
           type: string
           description: 약정할인율(%)
-          example: 10
+          example: 0
         free-period:
-          description: 무료 사용 기간
-          example: yyyymmdd ~ yyyymmdd
+          description: 무료 사용 기간 / 무료사용기간은 해당 없으면 신청일 1일로 표시함.
+          example: 20211115~20211115
         license-states-cd:
-          type: string
-          description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
-          example: "0"
+          type: integer
+          description: 라이선스 상태(신청 = 0, 사용중 = 1, 해지 = 2, 정지 = 3)
+          example: 0
     Bills:
       type: array
+      example: '
+                // request를 "/bill-list/date/{2021-11-15}"로 했을 경우
+                {
+                  "items" : [
+                      {
+                          "mem-sq" : "M123456",
+                          "bill-date" : "2021-11-15",
+                          "pay-amt" : 80000
+                      },
+                      {
+                          "mem-sq" : "M133333",
+                          "bill-date" : "2021-11-15",
+                          "pay-amt" : 10000
+                      }
+                  ]
+                }
+                // request를 "/bill-list/customer/"로 했을 경우, 단, 2021-10-30 가입, 2021-11-03 조회
+                {
+                  "items" : [
+                              {
+                                  "mem-sq" : "M123456",
+                                  "bill-date" : "2021-10-30",
+                                  "pay-amt" : 80000
+                              },
+                              {
+                                  "mem-sq" : "M133333",
+                                  "bill-date" : "2021-10-31",
+                                  "pay-amt" : 88000
+                              },
+                              {
+                                  "mem-sq" : "M133333",
+                                  "bill-date" : "2021-11-01",
+                                  "pay-amt" : 80000
+                              },
+                              {
+                                  "mem-sq" : "M133333",
+                                  "bill-date" : "2021-11-02",
+                                  "pay-amt" : 88000
+                              }
+                           ]
+                }
+              '
       items:
         $ref: '#/components/schemas/Bill'
     Bill:
@@ -168,7 +214,7 @@ components:
           format: yyyymmdd
         pay-amt:
           type: string
-          description: 1일부터 yyyymmdd까지 사용했을 때의 요금   
+          description: 약정할인이 적용된, 1일부터 yyyymmdd까지 사용했을 때의 요금   
     inline_response_200:
       required:
       - description
@@ -196,10 +242,11 @@ components:
           example: M12345
         free-period:
           description: 무료 사용 기간
-          example: yyyymmdd ~ yyyymmdd
+          format: yyyymmdd ~ yyyymmdd
+          example: 20211115 ~ 20211121
         license-info:
-          description: 사용자가 사용하는 요금제 정보 (Basic = 0, Preminum = 1)
-          example: 0
+          description: 사용자가 사용하는 요금제 정보 (8000)
+          example: 8000
         license-count:
           description: 사용자 수 
           example: 50
@@ -215,11 +262,11 @@ components:
           format: yyyymmdd
           example: 20210428 (설치 진행 중일 땐 99999999 (기본값))
         service-manager:
-          description: 서비스 담당자 정보 
+          description: SaaS 운영 담당자 정보 / 필수 아님. 
           example: 홍길동(010-3333-4444,honggildong@kt.com)
           format: name(010-nnnn-nnnn,name@domain)
         service-engineer:
-          description: 서비스 엔지니어 정보
+          description: SaaS 운영 엔지니어 정보 / 필수 아님. 
           example: 홍길동(010-3333-4444,honggildong@kt.com)
           format: name(010-nnnn-nnnn,name@domain)
   responses:
