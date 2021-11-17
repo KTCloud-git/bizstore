@@ -306,10 +306,6 @@ components:
                   type: string
                   description: 포트용도
                   example: "채팅 상담 관리자 사이트 접속 포트"
-        fw-security-control:
-            type: string
-            description: (부가서비스) 방화벽 보안관제 서비스. 신청시 "O" 신청안할시 "X"
-            example: "O"
         ips-security-control:
             type: string
             description: (부가서비스) IPS 보안관제 서비스. 신청시 "O" 신청안할시 "X"
