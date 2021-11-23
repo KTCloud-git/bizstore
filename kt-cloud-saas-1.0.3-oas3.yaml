@@ -3,6 +3,7 @@ openapi: 3.0.3
 info:
   title: KT Cloud BizOffice 서비스 API
   version: 2.1.2
+  description: OpenAPI 규격확인은 'https://swagger.io/specification/'를 참고합니다.
 servers:
 - url: https://연동대상시스템의 URL
   description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템의 IP는 하나로 지정하여 통신합니다.
@@ -21,10 +22,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/status'
         default:
+          description: 200응답 외로 응답값은 아래로 처리할 것.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responses'
+                $ref: '#/components/responses'
   /customers/:
     post:
       tags:
@@ -45,175 +47,174 @@ paths:
               schema:
                 type: string
                 format: uri
-       default:
+        default:
+          description: 200응답 외로 응답값은 아래로 처리할 것.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responses'   
-    
-    /customer/change-status/:
-      put:
-        tags:
-        - customer-management
-        summary: 이용 정지
-        description: 고객의 이용 상태 변경에 대한 처리를 함. 
-        requestBody:
-          content:
-            "application/json":
-              schema:
-                required:
-                  - "e-mail"
-                  - "status"
-                properties:
-                  e-mail:
-                    type: string
-                    example: honggildong@kt.com
-                  status:
-                    type: string
-                    enum: ["이용재개", "이용중지"]
-        response:
-          "200":
-            description: "정상 응답"
-            content:
-              "application/json":
-                schema:
-                  required:
-                    - "result"
-                    - "description"
-                  properties:
-                    result:
-                      type: enum
-                      enum: ["succeed","fail"]
-                    description:
-                      type: string
-                      example: "ㅇㅇㅇ가 잘못되었습니다. 상세하게 표현할 것."
-    /customer/change-service/:
-      put:
-        tags:
-        - customer service management
-        summary: 서비스 변경 
-        description: 고객이 소유한 서비스를 변경하도록 함. 
-        requestBody:
-          content:
-            "application/json":
-              schema:
-                required:
-                  - "e-mail"
-                  - "countOfId"
-                  - "sizeOfSharedStorage"
-                  - "sizeOfMail"
-                properties:
-                  e-mail:
-                    type: string
-                    example: honggildong@kt.com
-                  countOfId:
-                    type: integer
-                    description: 단위는 갯수
-                  sizeOfSharedStorage:
-                    type: integer
-                    description: 단위는 Giga byte
-                  sizeOfMail:
-                    type: integer
-                    description: 단위는 Giga byte
-        response:
-          "200":
-            description: "정상 응답"
-            exmaple: {
-                        "result":"true",
-                        "description":
-                          {
-                            "id":
-                            {
-                              "isChanged":"true",
-                              "amount":20
-                            },
-                            "sharedStorage":
-                            {
-                              "isChanged":"true",
-                              "amount":20
-                            },
-                            "mailStorage":
-                            {
-                              "isChanged":"true",
-                              "amount":20
-                            }
-                          }
-            }
-            content:
-              "application/json":
-                schema:
-                  required:
-                    - "result"
-                    - "description"
-                  properties:
-                    result:
-                      type: enum
-                      enum: ["succeed","fail"]
-                    description:
-                      type: object
-                      required:
-                        - id
-                        - sharedStorage
-                        - mailStorage
-                      properties:
-                        id:
-                          type: object
-                          required:
-                            - isChanged
-                            - amount
-                          properties:
-                            isChanged:
-                              type: string
-                              enum: ["true", "false"]
-                            amount:
-                              type: integer
-                              description: 변경 분량
-                        sharedStorage:
-                          type: object
-                          required:
-                            - isChanged
-                            - amount
-                          properties:
-                            isChanged:
-                              type: string
-                              enum: ["true", "false"]
-                            amount:
-                              type: integer
-                              description: 변경 분량
-                        mailStorage:
-                          type: object
-                          required:
-                            - isChanged
-                            - amount
-                          properties:
-                            isChanged:
-                              type: string
-                              enum: ["true", "false"]
-                            amount:
-                              type: integer
-                              description: 변경 분량
-                      
-    delete:
+                $ref: '#/components/responses'   
+  /customer/change-status/:
+    put:
       tags:
       - customer-management
-      summary: 고객 탈퇴
-      description: 고객 탈퇴처리를 위해 mem-sq에 해당하는 고객 레코드에 탈퇴일을 추가합니다. (Auth Key 값은 Basic 값 입니다.)
+      summary: 이용 정지
+      description: 고객의 이용 상태 변경에 대한 처리를 함. 
       requestBody:
         content:
           "application/json":
             schema:
               required:
                 - "e-mail"
-               properties:
+                - "status"
+              properties:
                 e-mail:
                   type: string
                   example: honggildong@kt.com
+                status:
+                  type: string
+                  enum: ["이용재개", "이용중지"]
+      responses:
+        "200":
+          description: "정상 응답"
+          content:
+            "application/json":
+              schema:
+                required:
+                  - "result"
+                  - "description"
+                properties:
+                  result:
+                    enum: ["succeed","fail"]
+                  description:
+                    type: string
+                    example: "ㅇㅇㅇ가 잘못되었습니다. 상세하게 표현할 것."
+  /customer/change-service/:
+    put:
+      tags:
+      - customer service management
+      summary: 서비스 변경 
+      description: 고객이 소유한 서비스를 변경하도록 함. 
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              required:
+                - "e-mail"
+                - "countOfId"
+                - "sizeOfSharedStorage"
+                - "sizeOfMail"
+              properties:
+                e-mail:
+                  type: string
+                  example: honggildong@kt.com
+                countOfId:
+                  type: integer
+                  description: 단위는 갯수
+                sizeOfSharedStorage:
+                  type: integer
+                  description: 단위는 Giga byte
+                sizeOfMail:
+                  type: integer
+                  description: 단위는 Giga byte
+      responses:
+        "200":
+          description: "정상 응답"
+          content:
+            "application/json":
+              schema:
+                required:
+                  - "result"
+                  - "description"
+                properties:
+                  result:
+                    enum: ["succeed","fail"]
+                  description:
+                    type: object
+                    required:
+                      - id
+                      - sharedStorage
+                      - mailStorage
+                    properties:
+                      id:
+                        type: object
+                        required:
+                          - isChanged
+                          - amount
+                        properties:
+                          isChanged:
+                            type: string
+                            enum: ["true", "false"]
+                          amount:
+                            type: integer
+                            description: 변경 분량
+                      sharedStorage:
+                        type: object
+                        required:
+                          - isChanged
+                          - amount
+                        properties:
+                          isChanged:
+                            type: string
+                            enum: ["true", "false"]
+                          amount:
+                            type: integer
+                            description: 변경 분량
+                      mailStorage:
+                        type: object
+                        required:
+                          - isChanged
+                          - amount
+                        properties:
+                          isChanged:
+                            type: string
+                            enum: ["true", "false"]
+                          amount:
+                            type: integer
+                            description: 변경 분량
+              examples: 
+                result:
+                  value: {"result":"true"}
+                description:
+                  value: {
+                          "description":
+                            {
+                              "id":
+                              {
+                                "isChanged":"true",
+                                "amount":20
+                              },
+                              "sharedStorage":
+                              {
+                                "isChanged":"true",
+                                "amount":20
+                              },
+                              "mailStorage":
+                              {
+                                "isChanged":"true",
+                                "amount":20
+                              }
+                            }
+                          }    
+    delete:
+      tags:
+      - customer-management
+      summary: 고객 탈퇴
+      description: 고객 탈퇴처리를 위해 mem-sq에 해당하는 고객 레코드에 탈퇴일을 추가합니다. (Auth Key 값은 Basic 값 입니다.)
+      parameters:
+      - name: mem-sq
+        in: path
+        description: 고객 식별정보
+        required: true
+        schema:
+          type: string
+          format: (M)nnnnn
       responses:
         default:
+          description: 요청에 대한 기본 응답값
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responses'   
+                $ref: '#/components/responses'
   /bill-list/date/{bill-date}:
     get:
       tags:
@@ -288,19 +289,19 @@ components:
           format: yyyymmdd~yyyymmdd
           example: "20210301~202010501"
         common-volume-type:
-          type: String
+          type: string
           description: 사용자가 추가한 공용 용량 크기 값(단위 Giga)
           example: "200"
         num-of-common-volume:
-          type: String
+          type: string
           description: 사용자가 추가한 공용 용량 개수
           example: "1"
         email-volume-type:
-          type: String
+          type: string
           description: 사용자가 추가한 전자메일 용량 크기 값(단위 Giga)
           example: "200"
         num-of-email-volume:
-          type: String
+          type: string
           description: 사용자가 추가한 전자메일 용량 개수
           example: "1"
         pay-amt:
@@ -310,24 +311,28 @@ components:
     customer-body:
       type: object
       properties:
+        mem-sq:
+          type: string
+          description: 고객 식별 정보 (포탈에서의)
+          example: "M12345"
         e-mail:
           type: string
           description: 고객 식별 정보
           example: "honggildong@kt.com"
         common-volume-type:
-          type: String
+          type: string
           description: 사용자가 추가한 공용 용량 크기 값(단위 Giga)
           example: "200"
         num-of-common-volume:
-          type: String
+          type: string
           description: 사용자가 추가한 공용 용량 개수
           example: "1"
         email-volume-type:
-          type: String
+          type: string
           description: 사용자가 추가한 전자메일 용량 크기 값(단위 Giga)
           example: "200"
         num-of-email-volume:
-          type: String
+          type: string
           description: 사용자가 추가한 전자메일 용량 개수
           example: "1"
         contract-discount-period:
