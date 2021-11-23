@@ -132,7 +132,7 @@ components:
           example: 111-111-2222
         license-info:
           type: integer
-          description: 8,000원으로 고정함.
+          description: 8,000원으로 고정.(1개의 license-count 당 요금을 의미함.)
           example: "8000"
         license-count:
           type: integer
@@ -214,7 +214,7 @@ components:
           format: yyyymmdd
         pay-amt:
           type: string
-          description: 약정할인이 적용된, 1일부터 yyyymmdd까지 사용했을 때의 요금   
+          description: 약정할인이 적용된, 1일부터 yyyymmdd까지 사용했을 때의 요금, 해당 월의 일수로 라이선스 금액을 나누어서 사용한 일수만큼의 수를 곱한 다음 합산한 금액   
     inline_response_200:
       required:
       - description
