@@ -52,7 +52,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/responses'   
+                $ref: '#/components/responses'
+    delete:
+      tags:
+      - customer-management
+      summary: 고객 탈퇴
+      description: 고객 탈퇴처리를 위해 mem-sq에 해당하는 고객 레코드에 탈퇴일을 추가합니다. (Auth Key 값은 Basic 값 입니다.)
+      parameters:
+      - name: mem-sq
+        in: path
+        description: 고객 식별정보
+        required: true
+        schema:
+          type: string
+          format: (M)nnnnn
+      responses:
+        default:
+          description: 요청에 대한 기본 응답값
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses'
   /customers/change-status/:
     put:
       tags:
@@ -64,12 +84,13 @@ paths:
           "application/json":
             schema:
               required:
-                - "e-mail"
+                - "mem-sq"
                 - "status"
               properties:
-                e-mail:
+                mem-sq:
                   type: string
-                  example: honggildong@kt.com
+                  description: KT Cloud에서의 고객 식별 정보
+                  example: M123456
                 status:
                   type: string
                   enum: ["이용재개", "이용중지"]
@@ -196,26 +217,7 @@ paths:
                               }
                             }
                           }    
-    delete:
-      tags:
-      - customer-management
-      summary: 고객 탈퇴
-      description: 고객 탈퇴처리를 위해 mem-sq에 해당하는 고객 레코드에 탈퇴일을 추가합니다. (Auth Key 값은 Basic 값 입니다.)
-      parameters:
-      - name: mem-sq
-        in: path
-        description: 고객 식별정보
-        required: true
-        schema:
-          type: string
-          format: (M)nnnnn
-      responses:
-        default:
-          description: 요청에 대한 기본 응답값
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/responses'
+    
   /bill-list/date/{bill-date}:
     get:
       tags:
@@ -273,9 +275,10 @@ components:
     Bill:
       type: object
       properties:
-        e-mail:
+        mem-sq:
           type: string
-          format: UTF-8
+          description: 고객식별정보
+          example: M123455
         bill-date:
           type: string
           format: yyyy-mm-dd
@@ -316,10 +319,10 @@ components:
           type: string
           description: 고객 식별 정보 (포탈에서의)
           example: "M12345"
-        e-mail:
+        mem-sq:
           type: string
-          description: 고객 식별 정보
-          example: "honggildong@kt.com"
+          description: 고객식별정보
+          example: M123455
         common-volume-type:
           type: string
           description: 사용자가 추가한 공용 용량 크기 값(단위 Giga)
@@ -351,7 +354,7 @@ components:
           example: "0"
     status:
       required:
-      - e-mail
+      - mem-sq
       - reg-date
       - status
       - service-manager
