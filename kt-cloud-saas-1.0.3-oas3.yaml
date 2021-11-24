@@ -53,7 +53,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses'   
-  /customer/change-status/:
+  /customers/change-status/:
     put:
       tags:
       - customer-management
@@ -88,7 +88,7 @@ paths:
                   description:
                     type: string
                     example: "ㅇㅇㅇ가 잘못되었습니다. 상세하게 표현할 것."
-  /customer/change-service/:
+  /customers/change-service/:
     put:
       tags:
       - customer service management
@@ -99,14 +99,15 @@ paths:
           "application/json":
             schema:
               required:
-                - "e-mail"
+                - "mem-sq"
                 - "countOfId"
                 - "sizeOfSharedStorage"
                 - "sizeOfMail"
               properties:
-                e-mail:
+                mem-sq:
                   type: string
-                  example: honggildong@kt.com
+                  description: KT Cloud에서의 고객 식별 정보 
+                  example: M12345
                 countOfId:
                   type: integer
                   description: 단위는 갯수
