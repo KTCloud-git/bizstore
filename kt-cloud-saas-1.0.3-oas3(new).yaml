@@ -49,28 +49,23 @@ paths:
     get:
       tags:
       - status-user-management
-      summary: 관리센터에서 메일 발송을 위한 이메일 조회 api(전체공지)
-      description: 기업DaaS를 이용하는 모든 user의 email을 회신
+      summary: 관리센터에서 메일 발송을 위한 사용자 정보 조회
+      description: 기업DaaS를 이용하는 모든 user의 정보 조회
       responses:
         "200":
           description: 유효한 요청에 대한 올바른 응답
           content:
             application/json:
               schema:
-                properties:
-                  "user-email" :
-                    type: array
-                    description: 모든 user의 이메일
-                    items:
-                      example: "test01@kt.com"
+                $ref: '#/components/schemas/User-infos'
         default:
           $ref : '#/components/responses'
   /api/status/all-email/{email}:
     get:
       tags:
       - status-user-management
-      summary: 관리센터에서 메일 발송을 위한 이메일 조회 api(해당 계정 공지)
-      description: kt cloud 포털 계정에 대한 모든 user의 email을 회신
+      summary: 관리센터에서 메일 발송을 위한 사용자 정보 조회(해당 계정 공지)
+      description: kt cloud 포털 계정에 대한 모든 user의 정보 조회
       parameters:
         - name: "email"
           in: path
@@ -84,20 +79,15 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  "account-email" :
-                    type: array
-                    description: kt cloud 포털 계정에 대한 모든 user의 이메일
-                    items:
-                      example: "test01@kt.com"
+                $ref: '#/components/schemas/User-infos'
         default:
           $ref : '#/components/responses'
   /api/status/all-email/manager/{email}:
     get:
       tags:
       - status-user-management
-      summary: 관리센터에서 메일 발송을 위한 이메일 조회 api(특정 사용자 공지)
-      description: kt cloud 포털 계정에 대한 고객 관리자 email을 회신
+      summary: 관리센터에서 메일 발송을 위한 사용자 정보 조회(특정 사용자 공지)
+      description: kt cloud 포털 계정에 대한 고객 관리자 정보 조회
       parameters:
         - name: "email"
           in: path
@@ -111,20 +101,15 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  "manager-email" :
-                    type: array
-                    description: kt cloud 포털 계정에 대한 고객 관리자(중간 관리자) 이메일
-                    items:
-                      example: "test01@kt.com"
+                $ref: '#/components/schemas/User-infos'
         default:
           $ref : '#/components/responses'
   /api/status/all-email/general/{email}:
     get:
       tags:
       - status-user-management
-      summary: 관리센터에서 메일 발송을 위한 이메일 조회 api(특정 사용자 공지)
-      description: kt cloud 포털 계정에 대한 일반 사용자 email을 회신
+      summary: 관리센터에서 메일 발송을 위한 사용자 정보 조회(특정 사용자 공지)
+      description: kt cloud 포털 계정에 대한 일반 사용자 정보 조회
       parameters:
         - name: "email"
           in: path
@@ -138,12 +123,7 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  "general-email" :
-                    type: array
-                    description: kt cloud 포털 계정에 대한 일반 사용자 이메일
-                    items:
-                      example: "test01@kt.com"
+                $ref: '#/components/schemas/User-infos'
         default:
           $ref : '#/components/responses'
   /api/customers/{email}:
@@ -210,6 +190,43 @@ paths:
           schema:
             type: string
             example : test@kt.com
+      responses:
+        default:
+          $ref : '#/components/responses'
+  /api/customers/sw-install/{email}:
+    post:
+      tags:
+      - customer-management
+      summary: 고객 SW설치 완료
+      description: 서비스 신청 프로세스 UI상 고객이 설치 완료 버튼을 클릭하면 KT Cloud와 NCC에서 해당 email에 대한 status를 템플릿 생성 중으로 변경
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      responses:
+        default:
+          $ref : '#/components/responses'
+  /api/customers/extra-service/{email}:
+    post:
+      tags:
+      - extra-service-management
+      summary: 고객 부가서비스 신청 및 해지
+      description: 서비스 신청 이외에 기업DaaS 사용 도중 부가서비스 신청 및 해지, 기존 데이터가 O일 때 X의 데이터가 오면 해지이고 기존 데이터가 X일 때 O의 데이터가 오면 신청
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Extra-service'
       responses:
         default:
           $ref : '#/components/responses'
@@ -318,6 +335,10 @@ components:
             type: string
             description: (부가서비스) DaaS매니지드 서비스. 신청시 "O" 신청안할시 "X"
             example: "X"
+        subscription-count:
+            type: integer
+            description: 0이면 최초신청, 1이상이면 재신청(재청약) / 신청 액션을 할 때마다 1씩 증가하게 설정 / 기업DaaS에서는 기존 데이터보다 1증가하면 기존 데이터에 업데이트 처리
+            example: 0
     Statuses:
       type: array
       items:
@@ -349,6 +370,49 @@ components:
           type: string
           description: 현재 사용 여부 회신
           example: ("신청 접수 중","신청 불가","고객 정보 생성 중","사용자 SW설치 중","템플릿 생성 중","VDI 배포 중","사용 중","변경 접수 중")
+    Extra-service:
+      type: object
+      properties:
+        ips-security-control:
+            type: string
+            description: (부가서비스) IPS 보안관제 서비스. 신청시 "O" 신청안할시(해지) "X"
+            example: "O"
+        security-control-report:
+            type: string
+            description: (부가서비스) 월간 관제 보고서 서비스. 신청시 "O" 신청안할시(해지) "X"
+            example: "O"
+        managed-service:
+            type: string
+            description: (부가서비스) DaaS매니지드 서비스. 신청시 "O" 신청안할시(해지) "X"
+            example: "X"
+    User-infos:
+      type: array
+      items:
+        $ref: '#/components/schemas/User-info'
+    User-info:
+      type: object
+      properties:
+        company-name:
+          type: string
+          description: 회사명
+          example: "KT"
+        user-name:
+          type: string
+          description: 사용자 이름
+          example: "홍길동"
+        user-type:
+          type: string
+          description: 고객 관리자, 일반 사용자 구분
+          example: "고객 관리자"
+        user-email:
+          type: string
+          description: 사용자 이메일
+          example: "honggildong@kt.com"
+        user-phone:
+          type: string
+          description: 사용자 전화번호
+          example: "010-1234-5678"
+          
   responses:
     "200":
       description: 성공, OK, 유효한 요청에 대한 예상된 응답
