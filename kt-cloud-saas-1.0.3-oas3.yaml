@@ -45,12 +45,12 @@ paths:
                 $ref: '#/components/schemas/Status'
         default:
           description: 예상못한 에러
-  /api/status/vm/:
+  /api/status/all-email/:
     get:
       tags:
-      - status-vm-management
-      summary: (추후 개발건/ 현재는 개발 안하셔도 됩니다.)vm상태 조회
-      description: 전체 고객의 vm상태 조회
+      - status-user-management
+      summary: 관리센터에서 메일 발송을 위한 이메일 조회 api(전체공지)
+      description: 기업DaaS를 이용하는 모든 user의 email을 회신
       responses:
         "200":
           description: 유효한 요청에 대한 올바른 응답
@@ -58,18 +58,19 @@ paths:
             application/json:
               schema:
                 properties:
-                  "vm-status" :
+                  "user-email" :
                     type: array
+                    description: 모든 user의 이메일
                     items:
-                      $ref: '#/components/schemas/Vm'
+                      example: "test01@kt.com"
         default:
-          description: 예상못한 에러
-  /api/status/vm/{email}:
+          $ref : '#/components/responses'
+  /api/status/all-email/{email}:
     get:
       tags:
-      - status-vm-management
-      summary: (추후 개발건/ 현재는 개발 안하셔도 됩니다.)vm상태 조회
-      description: cloud 포탈 고객(email) 별 vm상태 조회
+      - status-user-management
+      summary: 관리센터에서 메일 발송을 위한 이메일 조회 api(해당 계정 공지)
+      description: kt cloud 포털 계정에 대한 모든 user의 email을 회신
       parameters:
         - name: "email"
           in: path
@@ -84,18 +85,26 @@ paths:
             application/json:
               schema:
                 properties:
-                  "vm-status" :
+                  "account-email" :
                     type: array
+                    description: kt cloud 포털 계정에 대한 모든 user의 이메일
                     items:
-                      $ref: '#/components/schemas/Vm'
+                      example: "test01@kt.com"
         default:
-          description: 예상못한 에러
-  /api/status/user/:
+          $ref : '#/components/responses'
+  /api/status/all-email/manager/{email}:
     get:
       tags:
       - status-user-management
-      summary: (추후 개발건/ 현재는 개발 안하셔도 됩니다.)관리센터에서 메일 발송을 위한 이메일 조회 api
-      description: vdi를 사용하고 있는 전체 고객 이메일 조회
+      summary: 관리센터에서 메일 발송을 위한 이메일 조회 api(특정 사용자 공지)
+      description: kt cloud 포털 계정에 대한 고객 관리자 email을 회신
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
       responses:
         "200":
           description: 유효한 요청에 대한 올바른 응답
@@ -103,19 +112,40 @@ paths:
             application/json:
               schema:
                 properties:
-                  "manager" :
-                    type: string
-                    description: 고객 관리자(중간 관리자) 이메일
-                    example : "honggildong@kt.com"
-                  "vdi-user" :
+                  "manager-email" :
                     type: array
-                    description: 고객 관리자(중간 관리자) 아래의 일반 vdi 사용자
+                    description: kt cloud 포털 계정에 대한 고객 관리자(중간 관리자) 이메일
                     items:
-                      type: string
-                      example: ["test01@kt.com", "test02@kt.com", "test03@kt.com"]
-                    
+                      example: "test01@kt.com"
         default:
-          description: 예상못한 에러
+          $ref : '#/components/responses'
+  /api/status/all-email/general/{email}:
+    get:
+      tags:
+      - status-user-management
+      summary: 관리센터에서 메일 발송을 위한 이메일 조회 api(특정 사용자 공지)
+      description: kt cloud 포털 계정에 대한 일반 사용자 email을 회신
+      parameters:
+        - name: "email"
+          in: path
+          required: true
+          schema:
+            type: string
+            example : test@kt.com
+      responses:
+        "200":
+          description: 유효한 요청에 대한 올바른 응답
+          content:
+            application/json:
+              schema:
+                properties:
+                  "general-email" :
+                    type: array
+                    description: kt cloud 포털 계정에 대한 일반 사용자 이메일
+                    items:
+                      example: "test01@kt.com"
+        default:
+          $ref : '#/components/responses'
   /api/customers/{email}:
     post:
       tags:
@@ -140,7 +170,7 @@ paths:
     put:
       tags:
       - customer-management
-      summary: (추후 개발건/ 현재는 개발 안하셔도 됩니다.)서비스 변경
+      summary: 서비스 변경
       description: 최대 VM수 변경 요청. 사용자 포탈에서 보여지는 status값은 "변경 접수 중"
       parameters:
         - name: "email"
@@ -171,7 +201,7 @@ paths:
     delete:
       tags:
       - customer-management
-      summary: (추후 개발건/ 현재는 개발 안하셔도 됩니다.)고객 탈퇴
+      summary: 고객 탈퇴
       description: 고객 탈퇴처리를 위해 email에 해당하는 고객을 전달합니다. 이때, 해당 email의 vm이 0일때만 가능합니다, 그리고 메일 발송.md 파일 참고하여 수신자에게 메일 발송
       parameters:
         - name: "email"
@@ -276,9 +306,9 @@ components:
                   type: string
                   description: 포트용도
                   example: "채팅 상담 관리자 사이트 접속 포트"
-        security-control:
+        ips-security-control:
             type: string
-            description: (부가서비스) DaaS보안관제 서비스. 신청시 "O" 신청안할시 "X"
+            description: (부가서비스) IPS 보안관제 서비스. 신청시 "O" 신청안할시 "X"
             example: "O"
         security-control-report:
             type: string
@@ -311,36 +341,14 @@ components:
             type: integer
             description: 현재 구축 완료된 vdi 수 / 프로세스 UI에서 VDI배포 중 -> 사용 중으로 전환을 위한 확인에 사용
             example: 130
+        user-amount:
+            type: integer
+            description: 모든 고객 수(고객 관리자와 일반 유저 모두 포함)
+            example: 200
         status:
           type: string
           description: 현재 사용 여부 회신
           example: ("신청 접수 중","신청 불가","고객 정보 생성 중","사용자 SW설치 중","템플릿 생성 중","VDI 배포 중","사용 중","변경 접수 중")
-    Vm:
-      type: object
-      properties:
-        user-email:
-          type: string
-          description: 실제 vdi를 사용하고 있는 고객 식별 
-          example: "honggildong@kt.com"
-        vm-name:
-          type: string
-          example: "NC0101"
-        vm-spec:
-          type: string 
-          example: "2vCore x 4GB"
-        user-id:
-          type: string
-          example: "ktc_test01"
-        user-name:
-          type: string
-          example: "홍길동"
-        user-phone:
-          type: string
-          example: "010-1234-5678"
-        user-department:
-          type: string
-          description: 부서코드
-          example: "CPD"
   responses:
     "200":
       description: 성공, OK, 유효한 요청에 대한 예상된 응답
