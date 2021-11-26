@@ -1,4 +1,4 @@
-# Welcome to KT Cloud Biz 스토어
+# Welcome to KT Cloud Biz 스토어 기업 DaaS
 
 이 문서는 KT Cloud Biz 스토어<https://cloud.kt.com/bizstore>와의 연동을 위해 사용합니다
 
@@ -26,4 +26,5 @@ KT Cloud Biz 스토어의 API server와 연동을 위해 솔루션 업체에서 
 
 ## 저자
 
-1. KT Cloud 플랫폼개발팀 장용운 과장(yongwoon.jang@kt.com)
+1. KT Cloud 플랫폼개발팀 김재희 대리(jae_hee.kim@kt.com)
+2. KT Cloud 플랫폼개발팀 장용운 과장(yongwoon.jang@kt.com)
