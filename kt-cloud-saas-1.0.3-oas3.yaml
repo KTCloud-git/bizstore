@@ -359,6 +359,10 @@ components:
           description: 약정할인 기간(시작일~종료일)
           format: yyyymmdd~yyyymmdd
           example: 20210301~202010501
+        isERPConnection:
+          type: string
+          description : ERP 연동 여부 
+          enum : ["Y","N"]
         license-start-date:
           type: string
           description: Bizstore 상품신청 일자, 라이선스 시작 일 (yyyyMMdd)
