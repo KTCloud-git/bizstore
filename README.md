@@ -17,5 +17,3 @@
 ## 저자
 
 1. KT Cloud 플랫폼개발팀 장용운 과장(yongwoon.jang@kt.com)
-
-2. KT Cloud 플랫폼개발팀 김한슬 대리(kim.hanseul@kt.com)
