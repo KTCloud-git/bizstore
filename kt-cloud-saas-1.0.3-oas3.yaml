@@ -121,18 +121,18 @@ paths:
             schema:
               required:
                 - "mem-sq"
-                - "countOfId"
-                - "additional-common-volume"
-                - "additional-email-volume"
+                - "change-count-Of-Id"
+                - "change-common-volume"
+                - "change-email-volume"
               properties:
                 mem-sq:
                   type: string
                   description: KT Cloud에서의 고객 식별 정보 
                   example: M12345
-                countOfId:
+                change-count-Of-Id:
                   type: integer
                   description: 단위는 갯수
-                additional-common-volume:
+                change-common-volume:
                   type: object 
                   description: 사용자가 추가한 공용 용량 갯수
                   properties:
@@ -145,7 +145,7 @@ paths:
                     five-hundreds-giga-change-volume-cnt:
                       type : integer 
                       example: 1 
-                additional-email-volume:
+                change-email-volume:
                   type: object 
                   description: 사용자가 추가한 공용 용량 갯수
                   properties:
@@ -158,7 +158,6 @@ paths:
                     five-hundreds-giga-change-volume-cnt:
                       type : integer 
                       example: 1
-
       responses:
         "200":
           description: "정상 응답"
@@ -178,11 +177,11 @@ paths:
                   volume:
                     type: object
                     required:
-                      - total-count_of_id
+                      - total-count-of-id
                       - total-common-volume
                       - total-email-volume
                     properties:
-                      total_count_of_id:
+                      total_count-of-id:
                         type: integer
                         description:  id 변경후 최종 id 수량 
                       total-common-volume:
@@ -286,6 +285,9 @@ components:
           description: 시작일~종료일
           format: yyyymmdd~yyyymmdd
           example: "20210301~202010501"
+        count-of-id:
+          type: integer
+          description:  현재 고객이 사용하는 id 수량 
         common-volume:
           type: object 
           description: 사용자가 추가한 공용 용량 갯수
@@ -323,6 +325,9 @@ components:
           type: string
           description: 고객 식별 정보 (포탈에서의)
           example: "M12345"
+        count-of-id:
+          type: integer
+          description:  현재 고객이 사용하는 id 수량 
         common-volume:
           type: object 
           description: 사용자가 추가한 공용 용량 갯수
