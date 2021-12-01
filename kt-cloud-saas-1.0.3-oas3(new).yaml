@@ -132,13 +132,6 @@ paths:
       - customer-management
       summary: 서비스 신청, SSO 연동 관련 API.
       description: 고객정보를 연동대상시스템으로 전달하여 서비스 신청. 사용자 포탈에서 보여지는 status값은 "신청 접수 중", 그리고 메일 방송.md 파일 참고하여 수신자에게 메일 발송
-      parameters:
-        - name: "email"
-          in: path
-          required: true
-          schema:
-            type: string
-            example : test@kt.com
       requestBody:
         content:
           application/json:
