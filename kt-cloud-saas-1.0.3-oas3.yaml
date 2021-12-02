@@ -52,149 +52,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/responses'   
-  /customer/change-status/:
-    put:
-      tags:
-      - customer-management
-      summary: 이용 정지
-      description: 고객의 이용 상태 변경에 대한 처리를 함. 
-      requestBody:
-        content:
-          "application/json":
-            schema:
-              required:
-                - "e-mail"
-                - "status"
-              properties:
-                e-mail:
-                  type: string
-                  example: honggildong@kt.com
-                status:
-                  type: string
-                  enum: ["이용재개", "이용중지"]
-      responses:
-        "200":
-          description: "정상 응답"
-          content:
-            "application/json":
-              schema:
-                required:
-                  - "result"
-                  - "description"
-                properties:
-                  result:
-                    enum: ["succeed","fail"]
-                  description:
-                    type: string
-                    example: "ㅇㅇㅇ가 잘못되었습니다. 상세하게 표현할 것."
-  /customer/change-service/:
-    put:
-      tags:
-      - customer service management
-      summary: 서비스 변경 
-      description: 고객이 소유한 서비스를 변경하도록 함. 
-      requestBody:
-        content:
-          "application/json":
-            schema:
-              required:
-                - "e-mail"
-                - "countOfId"
-                - "sizeOfSharedStorage"
-                - "sizeOfMail"
-              properties:
-                e-mail:
-                  type: string
-                  example: honggildong@kt.com
-                countOfId:
-                  type: integer
-                  description: 단위는 갯수
-                sizeOfSharedStorage:
-                  type: integer
-                  description: 단위는 Giga byte
-                sizeOfMail:
-                  type: integer
-                  description: 단위는 Giga byte
-      responses:
-        "200":
-          description: "정상 응답"
-          content:
-            "application/json":
-              schema:
-                required:
-                  - "result"
-                  - "description"
-                properties:
-                  result:
-                    enum: ["succeed","fail"]
-                  description:
-                    type: object
-                    required:
-                      - id
-                      - sharedStorage
-                      - mailStorage
-                    properties:
-                      id:
-                        type: object
-                        required:
-                          - isChanged
-                          - amount
-                        properties:
-                          isChanged:
-                            type: string
-                            enum: ["true", "false"]
-                          amount:
-                            type: integer
-                            description: 변경 분량
-                      sharedStorage:
-                        type: object
-                        required:
-                          - isChanged
-                          - amount
-                        properties:
-                          isChanged:
-                            type: string
-                            enum: ["true", "false"]
-                          amount:
-                            type: integer
-                            description: 변경 분량
-                      mailStorage:
-                        type: object
-                        required:
-                          - isChanged
-                          - amount
-                        properties:
-                          isChanged:
-                            type: string
-                            enum: ["true", "false"]
-                          amount:
-                            type: integer
-                            description: 변경 분량
-              examples: 
-                result:
-                  value: {"result":"true"}
-                description:
-                  value: {
-                          "description":
-                            {
-                              "id":
-                              {
-                                "isChanged":"true",
-                                "amount":20
-                              },
-                              "sharedStorage":
-                              {
-                                "isChanged":"true",
-                                "amount":20
-                              },
-                              "mailStorage":
-                              {
-                                "isChanged":"true",
-                                "amount":20
-                              }
-                            }
-                          }    
+                $ref: '#/components/responses'
     delete:
       tags:
       - customer-management
@@ -215,6 +73,143 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses'
+  /customers/change-status/:
+    put:
+      tags:
+      - customer-management
+      summary: 이용 정지
+      description: 고객의 이용 상태 변경에 대한 처리를 함. 
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              required:
+                - "mem-sq"
+                - "status"
+              properties:
+                mem-sq:
+                  type: string
+                  description: KT Cloud에서의 고객 식별 정보
+                  example: M123456
+                status:
+                  type: string
+                  enum: ["이용재개", "이용중지"]
+      responses:
+        "200":
+          description: "정상 응답"
+          content:
+            "application/json":
+              schema:
+                required:
+                  - "result"
+                  - "description"
+                properties:
+                  result:
+                    enum: ["succeed","fail"]
+                  description:
+                    type: string
+                    example: "ㅇㅇㅇ가 잘못되었습니다. <- 설명은 상세하게 표현할 것."
+  /customers/change-service/:
+    put:
+      tags:
+      - customer service management
+      summary: 서비스 변경 
+      description: 고객이 소유한 서비스를 변경하도록 함. 
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              required:
+                - "mem-sq"
+                - "change-count-Of-Id"
+                - "change-common-volume"
+                - "change-email-volume"
+              properties:
+                mem-sq:
+                  type: string
+                  description: KT Cloud에서의 고객 식별 정보 
+                  example: M12345
+                change-count-Of-Id:
+                  type: integer
+                  description: 단위는 갯수
+                change-common-volume:
+                  type: object 
+                  description: 사용자가 추가한 공용 용량 갯수
+                  properties:
+                    one-giga-change-volume-cnt: 
+                      type: integer 
+                      example: 3 
+                    one-hundred-giga-change-volume-cnt:
+                      type: integer 
+                      example: 2 
+                    five-hundreds-giga-change-volume-cnt:
+                      type : integer 
+                      example: 1 
+                change-email-volume:
+                  type: object 
+                  description: 사용자가 추가한 공용 용량 갯수
+                  properties:
+                    one-giga-change-volume-cnt: 
+                      type: integer 
+                      example: 3 
+                    one-hundred-giga-change-volume-cnt:
+                      type: integer 
+                      example: 2 
+                    five-hundreds-giga-change-volume-cnt:
+                      type : integer 
+                      example: 1
+      responses:
+        "200":
+          description: "정상 응답"
+          content:
+            "application/json":
+              schema:
+                required:
+                  - "result"
+                  - "volume"
+                properties:
+                  result:
+                    enum: ["succeed","fail"]
+                  description: 
+                    type: "string"
+                    description: 성공 및 실패에 대한 상세한 사유
+                    example: "xxx 때문에 실패했습니다."
+                  volume:
+                    type: object
+                    required:
+                      - total-count-of-id
+                      - total-common-volume
+                      - total-email-volume
+                    properties:
+                      total_count-of-id:
+                        type: integer
+                        description:  id 변경후 최종 id 수량 
+                      total-common-volume:
+                        type: object
+                        description: 공용 용량 
+                        properties:
+                          one-giga-change-volume-cnt: 
+                            type: integer 
+                            example: 3 
+                          one-hundred-giga-change-volume-cnt:
+                            type: integer 
+                            example: 2 
+                          five-hundreds-giga-change-volume-cnt:
+                            type : integer 
+                            example: 1 
+                      total-email-volume:
+                        type: object
+                        description: 공용 용량 
+                        properties:
+                          one-giga-change-volume-cnt: 
+                            type: integer 
+                            example: 3 
+                          one-hundred-giga-change-volume-cnt:
+                            type: integer 
+                            example: 2 
+                          five-hundreds-giga-change-volume-cnt:
+                            type : integer 
+                            example: 1 
   /bill-list/date/{bill-date}:
     get:
       tags:
@@ -249,11 +244,12 @@ paths:
           "application/json":
             schema:
               required:
-                - "email"
+                - "mem-sq"
               properties:
-                "email" :
+                "mem-sq" :
                   type: string
-                  example : test@kt.com
+                  description: 고객식별 정보
+                  example : "M12345"
       responses:
         "200":
           description: OK
@@ -272,9 +268,10 @@ components:
     Bill:
       type: object
       properties:
-        e-mail:
+        mem-sq:
           type: string
-          format: UTF-8
+          description: 고객식별정보
+          example: M123455
         bill-date:
           type: string
           format: yyyy-mm-dd
@@ -288,22 +285,35 @@ components:
           description: 시작일~종료일
           format: yyyymmdd~yyyymmdd
           example: "20210301~202010501"
-        common-volume-type:
-          type: string
-          description: 사용자가 추가한 공용 용량 크기 값(단위 Giga)
-          example: "200"
-        num-of-common-volume:
-          type: string
-          description: 사용자가 추가한 공용 용량 개수
-          example: "1"
-        email-volume-type:
-          type: string
-          description: 사용자가 추가한 전자메일 용량 크기 값(단위 Giga)
-          example: "200"
-        num-of-email-volume:
-          type: string
-          description: 사용자가 추가한 전자메일 용량 개수
-          example: "1"
+        count-of-id:
+          type: integer
+          description:  현재 고객이 사용하는 id 수량 
+        common-volume:
+          type: object 
+          description: 사용자가 추가한 공용 용량 갯수
+          properties:
+            one-giga-volume-cnt: 
+              type: integer 
+              example: 3 
+            one-hundred-giga-volume-cnt:
+              type: integer 
+              example: 2 
+            five-hundreds-giga-volume-cnt:
+              type : integer 
+              example: 1 
+        email-volume:
+          type: object 
+          description: 사용자가 추가한 공용 용량 갯수
+          properties:
+            one-giga-volume-cnt: 
+              type: integer 
+              example: 3 
+            one-hundred-giga-volume-cnt:
+              type: integer 
+              example: 2 
+            five-hundreds-giga-volume-cnt:
+              type : integer 
+              example: 1 
         pay-amt:
           type: integer
           description: 요금(KRW 단위), 약정 할인 및 공용 용량, 전자메일 용량이 반영된 요금(bill date 해당 월 1일부터 bill date까지 반영)
@@ -315,31 +325,44 @@ components:
           type: string
           description: 고객 식별 정보 (포탈에서의)
           example: "M12345"
-        e-mail:
-          type: string
-          description: 고객 식별 정보
-          example: "honggildong@kt.com"
-        common-volume-type:
-          type: string
-          description: 사용자가 추가한 공용 용량 크기 값(단위 Giga)
-          example: "200"
-        num-of-common-volume:
-          type: string
-          description: 사용자가 추가한 공용 용량 개수
-          example: "1"
-        email-volume-type:
-          type: string
-          description: 사용자가 추가한 전자메일 용량 크기 값(단위 Giga)
-          example: "200"
-        num-of-email-volume:
-          type: string
-          description: 사용자가 추가한 전자메일 용량 개수
-          example: "1"
+        count-of-id:
+          type: integer
+          description:  현재 고객이 사용하는 id 수량 
+        common-volume:
+          type: object 
+          description: 사용자가 추가한 공용 용량 갯수
+          properties:
+            one-giga-volume-cnt: 
+              type: integer 
+              example: 3 
+            one-hundred-giga-volume-cnt:
+              type: integer 
+              example: 2 
+            five-hundreds-giga-volume-cnt:
+              type : integer 
+              example: 1 
+        email-volume:
+          type: object 
+          description: 사용자가 추가한 공용 용량 갯수
+          properties:
+            one-giga-volume-cnt: 
+              type: integer 
+              example: 3 
+            one-hundred-giga-volume-cnt:
+              type: integer 
+              example: 2 
+            five-hundreds-giga-volume-cnt:
+              type : integer 
+              example: 1 
         contract-discount-period:
           type: string
           description: 약정할인 기간(서비스 신청일~종료일)
           format: yyyymmdd~yyyymmdd
           example: 20210301~202010501
+        isERPConnection:
+          type: string
+          description : ERP 연동 여부 
+          enum : ["Y","N"]
         license-start-date:
           type: string
           description: Bizstore 상품신청 일자, 라이선스 시작 일 (yyyyMMdd)
@@ -350,7 +373,7 @@ components:
           example: "0"
     status:
       required:
-      - e-mail
+      - mem-sq
       - reg-date
       - status
       - service-manager
