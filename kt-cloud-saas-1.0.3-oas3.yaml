@@ -306,7 +306,7 @@ components:
           example: "1"
         pay-amt:
           type: integer
-          description: 요금(KRW 단위)
+          description: 요금(KRW 단위), 약정 할인 및 공용 용량, 전자메일 용량이 반영된 요금(bill date 해당 월 1일부터 bill date까지 반영)
           format: int32
     customer-body:
       type: object
@@ -337,7 +337,7 @@ components:
           example: "1"
         contract-discount-period:
           type: string
-          description: 약정할인 기간(시작일~종료일)
+          description: 약정할인 기간(서비스 신청일~종료일)
           format: yyyymmdd~yyyymmdd
           example: 20210301~202010501
         license-start-date:
