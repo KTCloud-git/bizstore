@@ -57,7 +57,8 @@ paths:
                     properties:
                       summary:
                         type: string
-                        description: 빈칸. 
+                        description: 용도
+                        example: "그룹웨어 가입 신청 페이지"
                       value:
                         description: 연동대상시스템의 로그인페이지
                         type: string
