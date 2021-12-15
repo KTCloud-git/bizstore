@@ -39,8 +39,8 @@ paths:
             schema:
               $ref: '#/components/schemas/customer-body'
       responses:
-        "302":
-          description: Redirect
+        "201":
+          description: 고객이 접속해야하는 Location 
           headers:
             Location:
               description: "앞으로 고객이 접속할 페이지"
