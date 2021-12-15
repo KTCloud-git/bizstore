@@ -39,7 +39,7 @@ paths:
             schema:
               $ref: '#/components/schemas/customer-body'
       responses:
-       "201":
+        "201":
           description: Creadted. 서비스 신청 완료된 경우, 고객에게 정상적으로 연동대상시스템의 로그인 페이지를 전달합니다.        
           headers:
             Location:
@@ -51,10 +51,16 @@ paths:
             application/json:
               schema:
                 properties:
-                  Location:
-                    description: 고객에게 보여줄 html page
+                  html:
                     type: object
-                    example: '{"html":{"summary":"","value":"http://연동대상시스템URL/SSO_URI?Query"}}'
+                    properties:
+                      summary:
+                        type: string
+                        description: 빈칸. 
+                      value:
+                        description: 연동대상시스템의 로그인페이지
+                        type: string
+                        example: http://연동대상시스템URL/SSO_URI?Query
         default:
           description: 200응답 외로 응답값은 아래로 처리할 것.
           content:
