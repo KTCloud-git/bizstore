@@ -362,7 +362,7 @@ components:
         status:
           type: string
           description: 현재 사용 여부 회신
-          example: ("신청 접수 중","신청 불가","고객 정보 생성 중","사용자 SW설치 중","템플릿 생성 중","VDI 배포 중","사용 중","변경 접수 중","(변경)VDI 배포 중")
+          example: ("신청 접수 중","신청 불가","고객정보 생성 중","사용자 SW설치 중","템플릿 생성 중","VDI 배포 중","사용 중","변경접수중","(변경)VDI 배포 중")
     Extra-service:
       type: object
       properties:
