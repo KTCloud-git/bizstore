@@ -5,13 +5,10 @@ info:
 servers:
   - url: https://meet.ktworks.co.kr
 paths:
-  /customer-management/customers/getToken:
+  /customer-management/customers/:
     post:
-      summary: 서비스 신청, 등록 API로 최초 getToken을 사용해서 Token을 가져옴 
-      description: Header의 값은 example의 값으로 고정되며, 받은 토큰을 putToken으로 전달해야함 
-      security:
-        - ApiKeyAuth: []
-          example: ['Basic sdjfklsdfjksldjfkl']
+      summary: 서비스 신청
+      description: 서비스 신청 API
       tags:
         - regiser-customer
       requestBody:
@@ -41,79 +38,78 @@ paths:
                   description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
                   example: 0
       responses:
-        '200':
-          description: 고객에게 정상적으로 KT Meet의 로그인 페이지를 전달합니다. 
-          content:
-            text/html:
+        '302':
+          description: 고객에게 보여줄 redirect html page
+          headers:
+            Location:
               schema:
                 type: string
-                example:
-                  html:
-                    summary: 고객에게 보여줄 html page 
-                    value: '<html>....</html>'
-        '401':  
-          description: not_match_authorization = authKey 에러  
+                description:  고객에게 노출할 redirect page url 
+                example: "https://meet.ktworks.co.kr/login"  
         default:
-          description: 예상못한 에러   
-  /customer-management/customers/putToken:
-    get:
-      summary: /customer-management/customers/{mem-sq}/getToken 토큰을 처리
-      tags:
-        - register 
-      parameters:
-        - name: t
-          in: query
-          description: /customer-management/customer/token 에서 받은 토큰값
-          example: 'https://meet.ktworks.co.kr/customer-management/customer/getToken?t=토큰값'
-          schema:
-            type: string
+          $ref: '#/components/responses'
+    put:
+      summary: 고객이 보유한 서비스 변경 
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              properties:
+                mem-sq:
+                  type: string
+                  description: 고객 식별정보
+                counts-of-user:
+                  type: integer
+                  description: 고객 수량 
       responses:
-        '200':
-          description: HTML 페이지 회신 
+        '400':
+          description: 서비스 변경 결과 전송 
           content:
-            text/html:
-              example: "로그인이 적용된 HTML 페이지"
+            "application/json":
               schema:
-                type: string 
-  /customer-management/customers/{mem-sq}/resign:
-    get:
-      summary: 고객 탈퇴 
-      description : Auth Key 값은 Basic 값 입니다. 
-      security:
-        - ApiKeyAuth: []
-          example: ['Basic sadfsdafsdfd']
-      parameters:
-        - name: mem-sq
-          in: path
-          description: KT Cloud가 보유하고 있는 고유의 고객 식별자
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: 유효한 요청에 대한 예상된 응답
-          content:
-            application/json:
-              schema:
-                required:
-                  - "success"
-                  - "description"
                 properties:
-                  success:
-                    description: 성공 실패 여부를 의미한다.
-                    example: "true or false"
+                  result:
+                    type: string
+                    enum: ["success", "fail"]
                   description:
-                    description: 실패 여부의 상세 원인을 표현한다. 
-        '401':
-          description: not_match_authorization = authKey 에러
+                    type: object 
+                    properties:
+                      subject:
+                        type: string
+                        description: "변경하는 대상"
+                        example: "사용자수"
+                      description:
+                        type: string
+                        description: "변경내용"
+                        example: "3명에서 4명으로 변경"
+    delete:
+      summary: 고객 삭제 
+      tags:
+        - delete-customer
+      requestBody:
+        content:
+          application/json:
+            schema:      
+              type: object
+              properties:
+                memSq:
+                  type: string 
+                  description: KT Cloud가 보유하고 있는 고유의 고객 식별자 
+                  example: M12345
+      responses:
+        '302':
+          description: 고객에게 보여줄 redirect html page
+          headers:
+            Location:
+              schema:
+                type: string
+                description:  고객에게 노출할 redirect page url 
+                example: "https://meet.ktworks.co.kr/login"  
         default:
-          description: 예상못한 에러
+          $ref: '#/components/responses'
   /bill-management/{bill-day}/bill-list:
     get:
       description: 연동 시스템에서 보유한 특정 일 곧 {bill-day}까지 과금했을 때의 요금을 회신합니다. 
-      security:
-        - ApiKeyAuth: []
-          example: ['Basic sdafsdfsdf']
       tags:
         - get-billinfo-day
       parameters:
@@ -136,9 +132,6 @@ paths:
   /bill-management/customers/{mem-sq}/bill-list:
     get:
       description: 특정 고객에 대한 가입일부터 현재까지의 각 일별로 라이선스 정보를 회신합니다. 
-      security:
-        - ApiKeyAuth: []
-          example: ['Basic dsadfsadfsdfsdf']
       tags:
         - get-billinfo
       parameters:
@@ -219,9 +212,4 @@ components:
           format: UTF-8
         license-count:
           type: string 
-          description: 해당 일자에 등록한 라이선스 #/components/Bill과는 다름.
-  securitySchemes:
-    ApiKeyAuth:        # arbitrary name for the security scheme
-      type: apiKey
-      in: header       # can be "header", "query" or "cookie"
-      name: Authorization  # name of the header, query parameter or cookie      
+          description: 해당 일자에 등록한 라이선스 #/components/Bill과는 다름.     
