@@ -125,6 +125,42 @@ paths:
                   description:
                     type: string
                     example: "ㅇㅇㅇ가 잘못되었습니다. <- 설명은 상세하게 표현할 것."
+  /customers/change-bill-status/:
+    put:
+      tags:
+      - customer-management
+      summary: 과금 상태 변경
+      description: 고객의 과금 상태를 변경하는 API
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              required:
+                - "mem-sq"
+                - "status"
+              properties:
+                mem-sq:
+                  type: string
+                  description: KT Cloud에서의 고객 식별 정보
+                  example: M123456
+                status:
+                  type: string
+                  enum: ["과금시작", "과금중지"]
+      responses:
+        "200":
+          description: "정상 응답"
+          content:
+            "application/json":
+              schema:
+                required:
+                  - "result"
+                  - "description"
+                properties:
+                  result:
+                    enum: ["succeed","fail"]
+                  description:
+                    type: string
+                    example: "ㅇㅇㅇ가 잘못되었습니다. <- 설명은 상세하게 표현할 것."
   /customers/change-service/:
     put:
       tags:
