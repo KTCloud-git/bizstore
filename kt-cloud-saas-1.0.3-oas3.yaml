@@ -13,41 +13,30 @@ paths:
       tags:
       - status-managent
       summary: 고객 전체에 대한 서비스 상태값 조회 
-    responses:
-      "200":
-        content: 
-          "application/json":
-            schema:
-              type: "array",
-              items:
-                $ref: '#/components/schemas/status'
-  /status/:
-    get:
-      tags:
-      - status-management
-      summary: 서비스 상태값 조회
-      description: 고객의 서비스 상태값 조회 
       parameters:
-      - name: mem-sq
-        in: path
-        description: 고객 식별정보
-        required: true
-        schema:
-          type: string
-          format: (M)nnnnn
+        - name: mem-sq
+          in: path
+          description: 고객 식별정보, 'all' keyword를 mem-sq 로 넣으면 전체 고객에 대한 정보가 return 됨. 
+          required: true
+          schema:
+            type: string
+            format: (M)nnnnn
+            example: "all"
       responses:
         "200":
-          description: 유효한 요청에 대한 올바른 응답
-          content:
-            application/json:
+          description: 요청 내역에 대한 정상 응답
+          content: 
+            "application/json":
               schema:
-                $ref: '#/components/schemas/status'
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/status'
         default:
-          description: 200응답 외로 응답값은 아래로 처리할 것.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/responses'
+            description: 200응답 외로 응답값은 아래로 처리할 것.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/responses'
   /customers/:
     post:
       tags:
