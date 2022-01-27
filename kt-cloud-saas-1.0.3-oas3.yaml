@@ -8,6 +8,19 @@ servers:
 - url: https://연동대상시스템의 URL
   description: https를 사용해야 하며 SSL 인증서를 KT Cloud 포탈에 공유해야합니다. 연동대상시스템의 IP는 하나로 지정하여 통신합니다.
 paths:
+  /status/:
+    get:
+      tags:
+      - status-managent
+      summary: 고객 전체에 대한 서비스 상태값 조회 
+    responses:
+      "200":
+        content: 
+          "application/json":
+            schema:
+              type: "array",
+              items:
+                $ref: '#/components/schemas/status'
   /status/{mem-sq}:
     get:
       tags:
@@ -430,6 +443,7 @@ components:
       - status
       - service-manager
       - service-engineer
+      - user-id-for-kaoni
       properties:
         mem-sq:
           description: 고객 식별정보
@@ -454,6 +468,10 @@ components:
           description: 서비스 엔지니어 정보
           example: 홍길동(010-3333-4444,honggildong@kt.com)
           format: name(010-nnnn-nnnn,name@domain)
+        user-id-for-kaoni:
+          type: string
+          description: 가온아이측 bizoffice 포탈 접속을 위한 user id 정보
+          example: kaoni
   responses:
     "200":
       description: 성공, OK, 유효한 요청에 대한 예상된 응답
