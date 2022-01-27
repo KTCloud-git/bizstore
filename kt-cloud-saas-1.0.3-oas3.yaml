@@ -21,12 +21,20 @@ paths:
               type: "array",
               items:
                 $ref: '#/components/schemas/status'
-  /status/{mem-sq}:
+  /status/:
     get:
       tags:
       - status-management
       summary: 서비스 상태값 조회
       description: 고객의 서비스 상태값 조회 
+      parameters:
+      - name: mem-sq
+        in: path
+        description: 고객 식별정보
+        required: true
+        schema:
+          type: string
+          format: (M)nnnnn
       responses:
         "200":
           description: 유효한 요청에 대한 올바른 응답
