@@ -5,6 +5,35 @@ info:
 servers:
   - url: https://meet.ktworks.co.kr
 paths:
+  /customer-management/domain/:
+    get:
+      summary: domain 존재 여부 확인
+      description: 서비스 신청 시 도메인 중복 여부를 확인하기 위한 API 
+      tags:
+        - check-domain-duplication 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                domain:
+                  type: string
+                  description: 고객이 요청하는 domain 정보 
+                  example: samsung
+      responses:
+        '400':
+          description: 요청에 대한 정상 응답
+          content:
+            "application/json":
+              schema:
+                properties:
+                  result:
+                    description: 중복여부
+                    type: string
+                    enum: ["notDuplicated", "duplicated"]
+        default:
+          $ref: '#/components/responses'
   /customer-management/customers/:
     post:
       summary: 서비스 신청
