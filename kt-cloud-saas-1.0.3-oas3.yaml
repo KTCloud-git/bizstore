@@ -5,35 +5,6 @@ info:
 servers:
   - url: https://meet.ktworks.co.kr
 paths:
-  /customer-management/domain/:
-    get:
-      summary: domain 존재 여부 확인
-      description: 서비스 신청 시 도메인 중복 여부를 확인하기 위한 API 
-      tags:
-        - check-domain-duplication 
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                domain:
-                  type: string
-                  description: 고객이 요청하는 domain 정보 
-                  example: samsung
-      responses:
-        '400':
-          description: 요청에 대한 정상 응답
-          content:
-            "application/json":
-              schema:
-                properties:
-                  result:
-                    description: 중복여부
-                    type: string
-                    enum: ["notDuplicated", "duplicated"]
-        default:
-          $ref: '#/components/responses'
   /customer-management/customers/:
     post:
       summary: 서비스 신청
@@ -50,6 +21,18 @@ paths:
                   type: string 
                   description: KT Cloud가 보유하고 있는 고유의 고객 식별자 
                   example: M12345
+                companyId:
+                  type: string 
+                  description: 회사 아이디, 중복되면 안됨. 중복될 경우 400 code로 중복사항을 return 할 것. 
+                  example: samsung
+                companyName:
+                  type: string 
+                  description: 회사 명 
+                  example: Samsung 
+                managerId:
+                  type: string 
+                  description: 운영자 아이디
+                  example: geonhee.lee
                 licenseStartDate:
                   type: string
                   description: 라이선스 시작 일 (yyyyMMdd)
@@ -75,6 +58,16 @@ paths:
                 type: string
                 description:  고객에게 노출할 redirect page url 
                 example: "https://meet.ktworks.co.kr/login"  
+        '400':
+          description: 회사 이름이 중복되었을 때.
+          content:
+            "application/json":
+              schema:
+                properties:
+                  result:
+                    description: 중복여부
+                    type: string
+                    example: "duplicated"
         default:
           $ref: '#/components/responses'
     put:
