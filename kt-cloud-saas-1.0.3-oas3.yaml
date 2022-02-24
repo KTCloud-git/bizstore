@@ -378,7 +378,7 @@ components:
               example: 1 
         pay-amt:
           type: integer
-          description: 요금(KRW 단위, VAT ), 약정 할인 및 공용 용량, 전자메일 용량이 반영된 요금(bill date 해당 월 1일부터 bill date까지 반영. 누적 값), 해지해도 조회가 됨.
+          description: 요금(KRW 단위, VAT 제외), 약정 할인 및 공용 용량, 전자메일 용량이 반영된 요금(bill date 해당 월 1일부터 bill date까지 반영. 누적 값), 해지해도 조회가 됨.
           format: int32
     customer-body:
       type: object
