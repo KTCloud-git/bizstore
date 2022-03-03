@@ -235,7 +235,7 @@ paths:
                   description: 
                     type: "string"
                     description: 성공 및 실패에 대한 상세한 사유
-                    example: "xxx 때문에 실패했습니다."
+                    example: "xxx 때문에 실패했습니다. or ['xxx에 대한 값을 yyy에서 zzz로 변경했습니다', 'qqq에 대한 값을 ppp로 변경했습니다.']"
                   volume:
                     type: object
                     required:
