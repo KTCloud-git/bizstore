@@ -467,8 +467,12 @@ components:
           format: name(010-nnnn-nnnn,name@domain)
         user-id-for-kaoni:
           type: string
-          description: 가온아이측 bizoffice 포탈 접속을 위한 user id 정보
+          description: 회사 ID 정보 
           example: kaoni
+        manager-id-for-kaoni:
+          type: string
+          description: 관리자 ID 정보 
+          example: kaoniKing
   responses:
     "200":
       description: 성공, OK, 유효한 요청에 대한 예상된 응답
