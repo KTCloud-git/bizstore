@@ -16,8 +16,10 @@
 
 - README.md : 설명서
 
-- KTBizstoreAPI.yaml : API 규격서 
+- kt-cloud-saas-1.0.3-oas3.yaml : API 규격서 
   * [REST Document 규격](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
+
+- BizStore 서비스 시나리오 설계도.pptx :  시나리오 설계도
 
 ## 저자
 
