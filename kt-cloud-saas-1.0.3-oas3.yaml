@@ -132,6 +132,35 @@ paths:
                 example: "https://meet.ktworks.co.kr/login"  
         default:
           $ref: '#/components/responses'
+  /customer-management/domain:
+    get:
+      description: domain이 존재하는지 여부를 확인합니다.
+      tags:
+        - check-domain
+      parameters:
+        - name: domain-name
+          in: path
+          description: 중복여부를 체크해야하는 도메인을 확인합니다. 
+          required: true
+          examples: ['kt']
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+            schema:
+              type: object
+              properties:
+                result:
+                  description: possible일 경우 중복값이 없다는 뜻고, impossible의 경우 중복값이 있다는 뜻임.
+                  type: string
+                  enum: ['possible', 'impossible']
+                description:
+                  description: 상세한 impossible 사유를 출력하도록 해야함.
+                  type: string
+                  examples: ['2022년 1월 20일 생성된 도메인과 중복됩니다.', '중복값이 아닙니다. 사용해도 좋습니다.']
   /bill-management/{bill-day}/bill-list:
     get:
       description: 연동 시스템에서 보유한 특정 일 곧 {bill-day}까지 과금했을 때의 요금을 회신합니다. 
