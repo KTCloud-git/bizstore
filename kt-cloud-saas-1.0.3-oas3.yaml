@@ -87,7 +87,7 @@ paths:
                   type: integer
                   description: 변경될 단가 정보(단위 원/월)
       responses:
-        '400':
+        '200':
           description: 서비스 변경 결과 전송 
           content:
             "application/json":
