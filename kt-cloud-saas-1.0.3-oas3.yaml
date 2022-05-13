@@ -252,6 +252,13 @@ components:
           type: integer
           format: int32
           description: 'KRW 단위'
+        pay-amt-real:
+          type: integer 
+          description: "협의계약가가 적용된 과금 비용"
+        pay-amt-real-description:
+          type: string 
+          description: "협의계약 근거"
+          example: "xxxx 요금은 yyyy-mm-dd에서 yyyy-mm-dd까지의 협이계약에 따라 청구됨."
     Usage:
       required:
         - bill-day
