@@ -4,6 +4,10 @@ info:
   version: '1.0.3'
 servers:
   - url: https://gcloud.ktbizmeet.com
+security:
+  [
+    
+  ]
 paths:
   /customer-management/customers/:
     post:
@@ -150,17 +154,16 @@ paths:
           description: OK
           content:
             application/json:
-            schema:
-              type: object
-              properties:
-                result:
-                  description: possible일 경우 중복값이 없다는 뜻고, impossible의 경우 중복값이 있다는 뜻임.
-                  type: string
-                  enum: ['possible', 'impossible']
-                description:
-                  description: 상세한 impossible 사유를 출력하도록 해야함.
-                  type: string
-                  examples: ['2022년 1월 20일 생성된 도메인과 중복됩니다.', '중복값이 아닙니다. 사용해도 좋습니다.']
+              schema:
+                properties:
+                  result:
+                    description: possible일 경우 중복값이 없다는 뜻고, impossible의 경우 중복값이 있다는 뜻임.
+                    type: string
+                    enum: ['possible', 'impossible']
+                  description:
+                    description: 상세한 impossible 사유를 출력하도록 해야함.
+                    type: string
+                    example: ['2022년 1월 20일 생성된 도메인과 중복됩니다.', '중복값이 아닙니다. 사용해도 좋습니다.']
   /bill-management/{bill-day}/bill-list:
     get:
       description: 연동 시스템에서 보유한 특정 일 곧 {bill-day}까지 과금했을 때의 요금을 회신합니다. 
@@ -227,6 +230,13 @@ components:
       description: 실패, Not Found, 찾지 못함. 
     '405':
       description: 실패, Method not allowed, Request의 endpoint와 resource가 유효하지 않음.
+  securitySchemes:
+    API:
+      type: "http"
+      description: 'Authorization header에 값이 들어가고, 
+                    해당 값이 유효 한지 확인. 
+                    서버 NAT IP, 요청 URL을 별도로 공유한 api key로 SHA-256으로 해싱한 값이 들어감.'
+      scheme: "digest"
   schemas:
     Bills:
       type: array
