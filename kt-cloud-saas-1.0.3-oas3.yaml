@@ -3,7 +3,7 @@ info:
   title: 고객 신청/변경/탈퇴 API
   version: '1.0.3'
 servers:
-  - url: https://meet.ktworks.co.kr
+  - url: https://gcloud.ktbizmeet.com
 paths:
   /customer-management/customers/:
     post:
