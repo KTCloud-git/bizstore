@@ -14,6 +14,14 @@ paths:
       description: 서비스 신청 API
       tags:
         - regiser-customer
+      parameters:
+        - name: TIME-STAMP
+          in: header
+          required: true
+          schema:
+            type: string
+            format: YYYYMMDDhhmmss
+            example: 2022062114810
       requestBody:
         content:
           application/json:
@@ -21,7 +29,7 @@ paths:
               type: object
               properties:
                 memSq:
-                  type: string 
+                  type: string
                   description: KT Cloud가 보유하고 있는 고유의 고객 식별자 
                   example: M12345
                 companyId:
@@ -75,6 +83,14 @@ paths:
           $ref: '#/components/responses'
     put:
       summary: 고객이 보유한 서비스 변경 
+      parameters:
+        - name: TIME-STAMP
+          in: header
+          required: true
+          schema:
+            type: string
+            format: YYYYMMDDhhmmss
+            example: 2022062114810
       requestBody:
         content:
           "application/json":
@@ -116,6 +132,14 @@ paths:
       summary: 고객 삭제 
       tags:
         - delete-customer
+      parameters:
+        - name: TIME-STAMP
+          in: header
+          required: true
+          schema:
+            type: string
+            format: YYYYMMDDhhmmss
+            example: 2022062114810
       requestBody:
         content:
           application/json:
@@ -143,6 +167,13 @@ paths:
       tags:
         - check-domain
       parameters:
+        - name: TIME-STAMP
+          in: header
+          required: true
+          schema:
+            type: string
+            format: YYYYMMDDhhmmss
+            example: 2022062114810
         - name: domain-name
           in: path
           description: 중복여부를 체크해야하는 도메인을 확인합니다. 
@@ -176,6 +207,13 @@ paths:
       tags:
         - get-billinfo-day
       parameters:
+        - name: TIME-STAMP
+          in: header
+          required: true
+          schema:
+            type: string
+            format: YYYYMMDDhhmmss
+            example: 2022062114810
         - name: bill-day
           in: path
           description: 조회하고 싶은 일자를 의미합니다.(해당 일의 요금 정보를 회신. 해당 월 요금 기준으로 일할 계산)
@@ -198,6 +236,13 @@ paths:
       tags:
         - get-billinfo
       parameters:
+        - name: TIME-STAMP
+          in: header
+          required: true
+          schema:
+            type: string
+            format: YYYYMMDDhhmmss
+            example: 2022062114810
         - name: mem-sq 
           in: path
           description: KT Cloud가 보유하고 있는 고유의 고객 식별자
@@ -287,4 +332,4 @@ components:
           format: UTF-8
         license-count:
           type: string 
-          description: 해당 일자에 등록한 라이선스 #/components/Bill과는 다름."
+          description: 해당 일자에 등록한 라이선스
