@@ -2,7 +2,6 @@ openapi: '3.0.2'
 info:
   title: 고객 신청/변경/탈퇴 API
   version: '1.0.3'
-  description: HTTP Digest Access Authentication을 따라서 Authentication을 함.
 servers:
   - url: https://gcloud.ktbizmeet.com
 security:
