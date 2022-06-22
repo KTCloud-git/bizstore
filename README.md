@@ -28,4 +28,8 @@
 
 ## 참조 
 
-1. [REST Document 규격](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
+1. [OpenAPI Guide](https://swagger.io/docs/specification/2-0/authentication/?sbsearch=authentication)
+
+2. [REST Document 규격](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
+
+
