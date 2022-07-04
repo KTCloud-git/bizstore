@@ -284,7 +284,7 @@ components:
     ApiKeyAuth:
       type: apiKey
       in: header
-      name: X-API-KEY
+      name: X_API_KEY
   schemas:
     Bills:
       type: array
