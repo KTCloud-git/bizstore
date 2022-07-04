@@ -14,7 +14,7 @@ paths:
       tags:
         - regiser-customer
       parameters:
-        - name: TIME-STAMP
+        - name: TIME_STAMP
           in: header
           required: true
           schema:
