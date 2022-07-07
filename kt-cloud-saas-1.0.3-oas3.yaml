@@ -17,6 +17,7 @@ paths:
         - name: TIME_STAMP
           in: header
           required: true
+          description: "api를 request를 발생시킨 시점을 의미"
           schema:
             type: string
             format: YYYYMMDDhhmmss
