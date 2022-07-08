@@ -34,16 +34,16 @@ paths:
                   example: M12345
                 companyId:
                   type: string 
-                  description: 회사 아이디, 중복되면 안됨. 중복될 경우 400 code로 중복사항을 return 할 것. 
+                  description: 회사 아이디, 중복되면 안됨. 
                   example: samsung
                 companyName:
                   type: string 
                   description: 회사 명 
-                  example: Samsung 
+                  example: 삼성전자 
                 managerId:
                   type: string 
                   description: 운영자 아이디
-                  example: geonhee.lee
+                  example: "geonhee.lee"
                 licenseStartDate:
                   type: string
                   description: 라이선스 시작 일 (yyyyMMdd)
@@ -52,38 +52,33 @@ paths:
                   type: string
                   description: 라이선스 종료 일 (yyyyMMdd)
                   example: 2021030
-                licenseDvsCd:
-                  type: string
-                  description: 라이선스 구분(데모 = 0 , 유료 = 1)
+                licenseCd:
+                  type: integer
+                  description: 라이선스 구분(무약정 = 0 , 1년 약정 = 1, 2년 약정 = 2, 3년 약정 = 3)
                   example: 1
-                licenseStatusCd:
-                  type: string
-                  description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
-                  example: 0
-                
       responses:
+        '200':
+          description: redirect되지 않을 경우 상세 실패 사유와 함께 응답 회신 
+          content:
+            "application/json":
+              schema:
+                properties: 
+                  result:
+                    description: 실패 원인
+                    type: string
+                    example: "parameter name 오류에 따른 실패" 
         '302':
           description: 고객에게 보여줄 redirect html page
           headers:
             Location:
               schema:
                 type: string
-                description:  고객에게 노출할 redirect page url 
-                example: "https://meet.ktworks.co.kr/login"  
-        '400':
-          description: 회사 이름이 중복되었을 때.
-          content:
-            "application/json":
-              schema:
-                properties:
-                  result:
-                    description: 중복여부
-                    type: string
-                    example: "duplicated"
+                description:  고객에게 노출할 redirect page url (고객별로 로그인된 페이지로 return할 것.)
+                example: "https://meet.ktworks.co.kr/login/"  
         default:
           $ref: '#/components/responses'
     put:
-      summary: 고객이 보유한 서비스 변경 
+      summary: 서비스 변경 
       parameters:
         - name: TIME_STAMP
           in: header
@@ -100,12 +95,10 @@ paths:
                 memSq:
                   type: string
                   description: 고객 식별정보
-                countsOfUser:
+                licenseCd:
                   type: integer
-                  description: 고객 수량 
-                payAmountPerUser:
-                  type: integer
-                  description: 변경될 단가 정보(단위 원/월)
+                  description: 라이선스 구분(무약정 = 0 , 1년 약정 = 1, 2년 약정 = 2, 3년 약정 = 3)
+                  example: 1
       responses:
         '200':
           description: 서비스 변경 결과 전송 
@@ -124,11 +117,13 @@ paths:
                       subject:
                         type: string
                         description: "변경하는 대상"
-                        example: "사용자수"
+                        example: "라이선스 수"
                       description:
                         type: string
                         description: "변경내용"
-                        example: "3명에서 4명으로 변경 or 유저당 3,000원에서 4,000원으로 변경"
+                        example: "무약정에서 약정으로 변경"
+        default:
+          $ref: '#/components/responses'
     delete:
       summary: 고객 삭제 
       tags:
@@ -152,17 +147,26 @@ paths:
                   description: KT Cloud가 보유하고 있는 고유의 고객 식별자 
                   example: M12345
       responses:
-        '302':
-          description: 고객에게 보여줄 redirect html page
-          headers:
-            Location:
+        '200':
+          description: 고객 삭제 결과 회신 
+          content:
+            "application/json":
               schema:
-                type: string
-                description:  고객에게 노출할 redirect page url 
-                example: "https://meet.ktworks.co.kr/login"  
+                properties: 
+                  result:
+                    description: 성공 및 실패 여부
+                    type: string
+                    enum:
+                      - "success"
+                      - "fail"
+                    example: "success"
+                  description:  
+                    description: 실패시 실패 원인, 성공의 경우 공백 
+                    type: string 
+                    example: "parameter name이 잘못됨"
         default:
           $ref: '#/components/responses'
-  /customer-management/domain:
+  /customer-management/domain/{domainName}:
     get:
       description: domain이 존재하는지 여부를 확인합니다.
       tags:
@@ -185,7 +189,7 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          description: 중복 확인 결과를 의미함.
           content:
             application/json:
               schema:
@@ -202,6 +206,8 @@ paths:
                     example: 
                     - '2022년 1월 20일 생성된 도메인과 중복됩니다.'
                     - '중복값이 아닙니다. 사용해도 좋습니다.'
+        default:
+          $ref: '#/components/responses'
   /bill-management/{bill-day}/bill-list:
     get:
       description: 연동 시스템에서 보유한 특정 일 곧 {bill-day}까지 과금했을 때의 요금을 회신합니다. 
@@ -217,7 +223,7 @@ paths:
             example: 2022062114810
         - name: billDay
           in: path
-          description: 조회하고 싶은 일자를 의미합니다.(해당 일의 요금 정보를 회신. 해당 월 요금 기준으로 일할 계산)
+          description: 조회하고 싶은 일자를 의미합니다.(해당 일의 요금 정보를 회신. 월 1일부터 해당 일까지 일할 계산)
           required: true
           schema:
             type: string
@@ -233,7 +239,7 @@ paths:
           $ref: '#/components/responses'
   /bill-management/customers/{mem-sq}/bill-list:
     get:
-      description: 특정 고객에 대한 가입일부터 현재까지의 각 일별로 라이선스 정보를 회신합니다. 
+      description: 특정 고객에 대한 가입일부터 billDay까지의 각 일별로 라이선스 정보를 회신합니다. 
       tags:
         - get-billinfo
       parameters:
@@ -263,7 +269,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Usage"             
+                $ref: "#/components/schemas/Usage"
+        default:
+          $ref: '#/components/responses'             
 components:
   responses:
     '200':
@@ -297,7 +305,6 @@ components:
         - billDay
         - memSq
         - licenseCount
-        - payAmt
       properties:
         billDay:
           type: string
@@ -308,17 +315,6 @@ components:
         license-count:
           type: string
           description: 해당 일자까지 요금 계산할 때의 license count로 1일에 5 license 2일에 6 license 사용시 다음날 전날 데이터 조회시 ⌈5+6/2⌉로 표시 
-        payAmt:
-          type: integer
-          format: int32
-          description: 'KRW 단위'
-        payAmtReal:
-          type: integer 
-          description: "협의계약가가 적용된 과금 비용"
-        payAmtRealDescription:
-          type: string 
-          description: "협의계약 근거"
-          example: "xxxx 요금은 yyyy-mm-dd에서 yyyy-mm-dd까지의 협이계약에 따라 청구됨."
     Usage:
       required:
         - billDay
@@ -333,4 +329,4 @@ components:
           format: UTF-8
         licenseCount:
           type: string 
-          description: 해당 일자에 등록한 라이선스
+          description: 해당 일자에 등록한 라이선스'
