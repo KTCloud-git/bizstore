@@ -251,6 +251,10 @@ components:
           description: 시작일~종료일
           format: yyyymmdd~yyyymmdd
           example: "20210301~202010501"
+        contract-discount-rate:
+          type: integer
+          description: 약정 할인율(%)
+          example: 30
         contract-discount-period:
           type: string
           description: 시작일~종료일
