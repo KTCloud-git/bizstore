@@ -1,7 +1,7 @@
 ---
 openapi: 3.0.3
 info:
-  title: KT Cloud Bizstore 서비스 API
+  title: KT Cloud bizplay 서비스 API
   description: API 인증은 JWT 형식으로 하며, JWT 토큰 생성 및 검증을 위한 상세 명세(Header, Payload, Public Key)는 아래 'JWT 토큰 생성을 위한 문서'를 참조합니다. JWT의 유효시간은 1분입니다. JWT Token내 signautre 부분에 ",포함 Private key는 입력하지 않음. Public key는 별도로 요청해 주세요. 
   version: 2.1.2
 externalDocs:
@@ -213,19 +213,35 @@ components:
         $ref: '#/components/schemas/Bill'
     Bill:
       required:
+      - seller
       - mem-sq
       - bill-date
+      - service-type
       - service-info
       - free-period
       - license-count
-      - pay-amt
+      - real-pay-amt
       properties:
+        seller:
+          type: string
+          description: bizplay가 판매했는지 여부에 따라 R/S 배분율이 바뀜.
+          enum:
+            - "bizplay"
+            - "ktcloud"
+          example: "bizplay"
         mem-sq:
           type: string
           format: UTF-8
         bill-date:
           type: string
           format: yyyy-mm-dd
+        service-type:
+          type: string
+          enum:
+            - static
+            - variation
+          description: 고정, 변동 여부
+          example: "static"
         service-info:
           type: string
           description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
@@ -242,7 +258,7 @@ components:
           example: "20210301~202010501"
         license-count:
           type: string
-          description: 사용량
+          description: 사용량, 매달 1일부터 조회 일까지의 license count를 의미함.
         usage-pay-amt:
           type: integer
           description: license-count 기반 요금 (KRW 단위)
@@ -255,9 +271,9 @@ components:
           type: integer
           description: onetime type과 install-complete-date 기반으로 계산된 도입비 (KRW 단위)
           format: int32
-        pay-amt:
+        real-pay-amt:
           type: integer
-          description: license-count + onetime-pay-amt 요금, 전체 요금(KRW 단위)
+          description: '"license-count 기반 요금" + "onetime-pay-amt 기반 요금", 전체 요금(KRW 단위)'
           format: int32
     customer-body:
       type: object
@@ -361,8 +377,6 @@ components:
       description: 실패, Method not allowed, Request의 endpoint와 resource가 유효하지 않음.
     "406":
       description: 실패, 무료체험 고객
-      
-  
   securitySchemes:
     tokenAuth:
       type: http
