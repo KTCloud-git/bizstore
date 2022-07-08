@@ -60,6 +60,7 @@ paths:
                   type: string
                   description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
                   example: 0
+                
       responses:
         '302':
           description: 고객에게 보여줄 redirect html page
@@ -84,7 +85,7 @@ paths:
     put:
       summary: 고객이 보유한 서비스 변경 
       parameters:
-        - name: TIME-STAMP
+        - name: TIME_STAMP
           in: header
           required: true
           schema:
@@ -96,13 +97,13 @@ paths:
           "application/json":
             schema:
               properties:
-                mem-sq:
+                memSq:
                   type: string
                   description: 고객 식별정보
-                counts-of-user:
+                countsOfUser:
                   type: integer
                   description: 고객 수량 
-                pay-amount-per-user:
+                payAmountPerUser:
                   type: integer
                   description: 변경될 단가 정보(단위 원/월)
       responses:
@@ -133,7 +134,7 @@ paths:
       tags:
         - delete-customer
       parameters:
-        - name: TIME-STAMP
+        - name: TIME_STAMP
           in: header
           required: true
           schema:
@@ -167,14 +168,14 @@ paths:
       tags:
         - check-domain
       parameters:
-        - name: TIME-STAMP
+        - name: TIME_STAMP
           in: header
           required: true
           schema:
             type: string
             format: YYYYMMDDhhmmss
             example: 2022062114810
-        - name: domain-name
+        - name: domainName
           in: path
           description: 중복여부를 체크해야하는 도메인을 확인합니다. 
           required: true
@@ -207,14 +208,14 @@ paths:
       tags:
         - get-billinfo-day
       parameters:
-        - name: TIME-STAMP
+        - name: TIME_STAMP
           in: header
           required: true
           schema:
             type: string
             format: YYYYMMDDhhmmss
             example: 2022062114810
-        - name: bill-day
+        - name: billDay
           in: path
           description: 조회하고 싶은 일자를 의미합니다.(해당 일의 요금 정보를 회신. 해당 월 요금 기준으로 일할 계산)
           required: true
@@ -236,20 +237,20 @@ paths:
       tags:
         - get-billinfo
       parameters:
-        - name: TIME-STAMP
+        - name: TIME_STAMP
           in: header
           required: true
           schema:
             type: string
             format: YYYYMMDDhhmmss
             example: 2022062114810
-        - name: mem-sq 
+        - name: memSq 
           in: path
           description: KT Cloud가 보유하고 있는 고유의 고객 식별자
           required: true
           schema:
             type: string
-        - name: bill-day
+        - name: billDay
           in : query
           description: 조회하고 싶은 월을 의미합니다.
           required: true
@@ -293,43 +294,43 @@ components:
         $ref: '#components/schemas/Bill'
     Bill:
       required:
-        - bill-day
-        - mem-sq
-        - license-count
-        - pay-amt
+        - billDay
+        - memSq
+        - licenseCount
+        - payAmt
       properties:
-        bill-day:
+        billDay:
           type: string
           format: "yyyy-mm-dd"
-        mem-sq:
+        memSq:
           type: string
           format: UTF-8
         license-count:
           type: string
           description: 해당 일자까지 요금 계산할 때의 license count로 1일에 5 license 2일에 6 license 사용시 다음날 전날 데이터 조회시 ⌈5+6/2⌉로 표시 
-        pay-amt:
+        payAmt:
           type: integer
           format: int32
           description: 'KRW 단위'
-        pay-amt-real:
+        payAmtReal:
           type: integer 
           description: "협의계약가가 적용된 과금 비용"
-        pay-amt-real-description:
+        payAmtRealDescription:
           type: string 
           description: "협의계약 근거"
           example: "xxxx 요금은 yyyy-mm-dd에서 yyyy-mm-dd까지의 협이계약에 따라 청구됨."
     Usage:
       required:
-        - bill-day
-        - mem-sq
-        - license-count
+        - billDay
+        - memSq
+        - licenseCount
       properties:
-        bill-day:
+        billDay:
           type: string 
           format: "yyyy-mm-dd"
-        mem-sq:
+        memSq:
           type: string 
           format: UTF-8
-        license-count:
+        licenseCount:
           type: string 
           description: 해당 일자에 등록한 라이선스
