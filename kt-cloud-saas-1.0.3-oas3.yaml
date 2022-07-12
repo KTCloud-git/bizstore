@@ -41,7 +41,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/status'
+                $ref: '#/components/schemas/Status'
         "401":
           description: not_match_authorization = authKey 에러
         default:
@@ -136,7 +136,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200'
+                $ref: '#/components/responses'
         "401":
           description: not_match_authorization = authKey 에러
         default:
@@ -219,8 +219,15 @@ components:
       - service-type
       - service-info
       - free-period
+      - contract-discount-rate
+      - contract-discount-period
       - license-count
-      - real-pay-amt
+      - real-license-count
+      - usage-pay-amt
+      - basic-installation-info
+      - extended-installation-info
+      - relation-development-info
+      - total-pay-amt
       properties:
         seller:
           type: string
@@ -232,9 +239,14 @@ components:
         mem-sq:
           type: string
           format: UTF-8
+        reg-date:
+          type: string
+          format: yyyy-mm-dd
+          description: 고객이 서비스를 신청한 날
         bill-date:
           type: string
           format: yyyy-mm-dd
+          description: 과금 규모를 확인할 일자.(1일에서 yyyy-mm-dd까지의 일자에 해당하는 과금액을 회신해야함.)
         service-type:
           type: string
           enum:
@@ -244,7 +256,7 @@ components:
           example: "static"
         service-info:
           type: string
-          description: 해당 서비스 정보로 '서비스 요금제 유형(납부유형)'을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)
+          description: '"서비스 요금제 유형(납부유형)"을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)'
           example: "2"
         free-period:
           type: string
@@ -262,22 +274,104 @@ components:
           example: "20210301~202010501"
         license-count:
           type: string
-          description: 사용량, 매달 1일부터 조회 일까지의 license count를 의미함.
+          description: 기준유저(계약한 사용자수) 수, 특정 요금제는 사용자 수가 변경되어도 기준 유저 기준으로 과금
+        real-license-count:
+          type: string
+          description: 실유저(실제사용한 사용자수), 매달 1일부터 조회 일까지의 실제 사용자 수를 의미함. 평균 사용자 수를 측정 
         usage-pay-amt:
           type: integer
-          description: license-count 기반 요금 (KRW 단위)
+          description: '"license-count or real-license-count" 기준 요금(KRW 단위)으로 service-type이 고정이면 license-count로 계산하고 아니면 real-license-count로 계산'
           format: int32
-        install-complete-date: 
-          type: string
-          format: yyyy-mm-dd
-          description: 컨설팅을 통한 설치 완료일
-        onetime-pay-amt:
+        basic-installation-info:
+          type: object
+          description: 도입비 정보 
+          properties:
+            status:
+              type: integer
+              description: -1(미해당 고객) / 0(설치진행중) / 1(설치 완료) / 98(삭제진행중) / 99(삭제 완료)
+              example: 1
+            complete-date: 
+              type: string
+              format: yyyy-mm-dd
+              description: 도입을 위한 초기 설정이 완료된 시점을 의미함. 
+            pay-type:
+              type: string 
+              enum:
+                - 도입비해당없음.
+                - 일시불 
+                - 분할(선수금)
+                - 분할(중도금)
+                - 분할(잔금)
+                - 스프레드(1년)
+                - 스프레드(2년)
+                - 스프레드(3년)
+                - 일괄청구(해지)
+              example: "일시불"
+            pay-amt:
+              type: integer
+              description: onetime type과 install-complete-date 기반으로 계산된 도입비 (KRW 단위)
+              format: int32
+        extended-installation-info:
+          type: object
+          description: 확장 상품 도입비 정보
+          properties:
+            status:
+              type: integer
+              description: -1(미해당 고객) / 0(설치진행중) / 1(설치 완료) / 98(삭제 진행중) / 99(삭제 완료)
+              example: 1
+            complete-date: 
+              type: string
+              format: yyyy-mm-dd
+              description: 확장상품에 대한 도입을 위한 설정이 완료된 시점을 의미함. 
+            pay-type:
+              type: string 
+              enum:
+                - 확장상품도입비해당없음.
+                - 일시불 
+                - 분할(선수금)
+                - 분할(중도금)
+                - 분할(잔금)
+                - 스프레드(1년)
+                - 스프레드(2년)
+                - 스프레드(3년)
+                - 일괄청구(해지)
+              example: "일시불"
+            pay-amt:
+              type: integer
+              description: onetime type과 install-complete-date 기반으로 계산된 도입비 (KRW 단위)
+              format: int32
+        relation-development-info:
+          type: object
+          description: 연계개발 정보 
+          properties:
+            status:
+              type: integer
+              description: -1(미해당 고객) / 0(개발 진행중) / 1(개발 완료) / 98(삭제 진행중) / 99(삭제 완료)
+              example: 1
+            complete-date: 
+              type: string
+              format: yyyy-mm-dd
+              description: 연계개발에 대한 개발이 완료된 시점을 의미함. 
+            pay-type:
+              type: string 
+              enum:
+                - 연계개발해당없음.
+                - 일시불 
+                - 분할(선수금)
+                - 분할(중도금)
+                - 분할(잔금)
+                - 스프레드(1년)
+                - 스프레드(2년)
+                - 스프레드(3년)
+                - 일괄청구(해지)
+              example: "일시불"
+            pay-amt:
+              type: integer
+              description: onetime type과 install-complete-date 기반으로 계산된 도입비 (KRW 단위)
+              format: int32      
+        total-pay-amt:
           type: integer
-          description: onetime type과 install-complete-date 기반으로 계산된 도입비 (KRW 단위)
-          format: int32
-        real-pay-amt:
-          type: integer
-          description: '"license-count 기반 요금" + "onetime-pay-amt 기반 요금", 전체 요금(KRW 단위)'
+          description: 고객에게 bill-month에 해당하는 시점에 요금을 표현함. '"usage-pay-amt" + "basic-installation-info:pay-amt" + "extended-installation-info:pay-amt", "relation-installation-info", 전체 요금(KRW 단위)'
           format: int32
     customer-body:
       type: object
@@ -291,14 +385,6 @@ components:
           - 3
           - 4 
           - 5
-        onetime-type:
-          type: string
-          description: 도입비 분할 여부를 코드화한 값(0=별도문의, 1=도입비 분할납부, 2=도입비 초기납부)
-          example: "1"
-          enum:
-          - 0
-          - 1
-          - 2
         contract-period:
           type: string
           description: 약정기간 구분 코드(0=무약정, n=n년 약정)
@@ -308,60 +394,153 @@ components:
           description: 약정할인 기간(시작일~종료일)
           format: yyyymmdd~yyyymmdd
           example: 20210301~202010501
+        license-states-cd:
+          type: integer
+          description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
+          example: 0
         license-start-date:
           type: string
           description: Bizstore 상품신청 일자, 라이선스 시작 일 (yyyyMMdd)
           example: "20201210"
-        license-states-cd:
-          type: string
-          description: 라이선스 상태(사용중 = 0, 해지 = 1, 정지 = 2)
-          example: "0"
-    inline_response_200:
+    Status:
       required:
-      - description
-      - success
+        - seller
+        - mem-sq
+        - service-type
+        - service-info
+        - free-period
+        - contract-discount-rate
+        - contract-discount-period
+        - license-count
+        - real-license-count
+        - basic-installation-info
+        - extended-installation-info
+        - relation-development-info
       properties:
-        success:
-          description: 성공 실패 여부를 의미한다.
-          example: true or false
-        description:
-          description: 실패 여부의 상세 원인을 표현한다.
-    status:
-      required:
-      - mem-sq
-      - reg-date
-      - install-complete-date
-      - status
-      - service-manager
-      - service-engineer
-      properties:
-        mem-sq:
-          description: 고객 식별정보
-          example: M12345
-        license-start-date:
-          description: 고객 신청일(kt cloud bizstore 신청기준)
-          format: yyyymmdd
-          example: 20210428
-        reg-date:
-          description: 고객 신청일(비즈플레이 가입기준)
-          format: yyyymmdd
-          example: 20210428
-        install-complete-date:
-          description: 설치 완료일.
-          format: yyyymmdd
-          example: 20210428 (설치 진행 중일 땐 99999999 (기본값))
-        status:
-          type: string
-          description: 0(설치진행중) / 1(설치 완료) / 98(삭제진행중) / (삭제 완료 - delete되서 값 없으면 401 코드 또는 "99" 값으로 리턴)
-          example: "1"
-        service-manager:
-          description: 서비스 담당자 정보 
-          example: 홍길동(010-3333-4444,honggildong@kt.com)
-          format: name(010-nnnn-nnnn,name@domain)
-        service-engineer:
-          description: 서비스 엔지니어 정보
-          example: 홍길동(010-3333-4444,honggildong@kt.com)
-          format: name(010-nnnn-nnnn,name@domain)
+          seller:
+            type: string
+            description: bizplay가 판매했는지 여부에 따라 R/S 배분율이 바뀜.
+            enum:
+              - "bizplay"
+              - "ktcloud"
+            example: "bizplay"
+          mem-sq:
+            type: string
+            format: UTF-8
+          reg-date:
+            type: string
+            format: yyyy-mm-dd
+            description: 고객이 서비스를 신청한 날
+          bill-date:
+            type: string
+            format: yyyy-mm-dd
+            description: 과금 규모를 확인할 일자.(1일에서 yyyy-mm-dd까지의 일자에 해당하는 과금액을 회신해야함.)
+          service-type:
+            type: string
+            enum:
+              - static
+              - variation
+            description: 고정, 변동 여부
+            example: "static"
+          service-info:
+            type: string
+            description: '"서비스 요금제 유형(납부유형)"을 코드화한 값(2=standard, 3=premium, 4=public, 5=enterprise)'
+            example: "2"
+          free-period:
+            type: string
+            description: 시작일~종료일
+            format: yyyymmdd~yyyymmdd
+            example: "20210301~202010501"
+          contract-discount-rate:
+            type: integer
+            description: 약정 할인율(%)
+            example: 30
+          contract-discount-period:
+            type: string
+            description: 시작일~종료일
+            format: yyyymmdd~yyyymmdd
+            example: "20210301~202010501"
+          license-count:
+            type: string
+            description: 기준유저(계약한 사용자수) 수, 특정 요금제는 사용자 수가 변경되어도 기준 유저 기준으로 과금
+          real-license-count:
+            type: string
+            description: 실유저(실제사용한 사용자수), 매달 1일부터 조회 일까지의 실제 사용자 수를 의미함. 평균 사용자 수를 측정 
+          basic-installation-info:
+            type: object
+            description: 도입비 정보 
+            properties:
+              status:
+                type: integer
+                description: -1(미해당 고객) / 0(설치진행중) / 1(설치 완료) / 98(삭제진행중) / 99(삭제 완료)
+                example: 1
+              complete-date: 
+                type: string
+                format: yyyy-mm-dd
+                description: 도입을 위한 초기 설정이 완료된 시점을 의미함. 
+              pay-type:
+                type: string 
+                enum:
+                  - 도입비해당없음.
+                  - 일시불 
+                  - 분할(선수금)
+                  - 분할(중도금)
+                  - 분할(잔금)
+                  - 스프레드(1년)
+                  - 스프레드(2년)
+                  - 스프레드(3년)
+                  - 일괄청구(해지)
+                example: "일시불"
+          extended-installation-info:
+            type: object
+            description: 확장 상품 도입비 정보
+            properties:
+              status:
+                type: integer
+                description: -1(미해당 고객) / 0(설치진행중) / 1(설치 완료) / 98(삭제 진행중) / 99(삭제 완료)
+                example: 1
+              complete-date: 
+                type: string
+                format: yyyy-mm-dd
+                description: 확장상품에 대한 도입을 위한 설정이 완료된 시점을 의미함. 
+              pay-type:
+                type: string 
+                enum:
+                  - 확장상품도입비해당없음.
+                  - 일시불 
+                  - 분할(선수금)
+                  - 분할(중도금)
+                  - 분할(잔금)
+                  - 스프레드(1년)
+                  - 스프레드(2년)
+                  - 스프레드(3년)
+                  - 일괄청구(해지)
+                example: "일시불"
+          relation-development-info:
+            type: object
+            description: 연계개발 정보 
+            properties:
+              status:
+                type: integer
+                description: -1(미해당 고객) / 0(개발 진행중) / 1(개발 완료) / 98(삭제 진행중) / 99(삭제 완료)
+                example: 1
+              complete-date: 
+                type: string
+                format: yyyy-mm-dd
+                description: 연계개발에 대한 개발이 완료된 시점을 의미함. 
+              pay-type:
+                type: string 
+                enum:
+                  - 연계개발해당없음.
+                  - 일시불 
+                  - 분할(선수금)
+                  - 분할(중도금)
+                  - 분할(잔금)
+                  - 스프레드(1년)
+                  - 스프레드(2년)
+                  - 스프레드(3년)
+                  - 일괄청구(해지)
+                example: "일시불"   
   responses:
     "200":
       description: 성공, OK, 유효한 요청에 대한 예상된 응답
