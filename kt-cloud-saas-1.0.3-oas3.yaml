@@ -44,18 +44,9 @@ paths:
                   type: string 
                   description: 운영자 아이디
                   example: "geonhee.lee"
-                licenseStartDate:
-                  type: string
-                  description: 라이선스 시작 일 (yyyyMMdd)
-                  example: 20201210
-                licenseEndDate:
-                  type: string
-                  description: 라이선스 종료 일 (yyyyMMdd)
-                  example: 2021030
-                licenseCd:
+                licenseCount:
                   type: integer
-                  description: 라이선스 구분(무약정 = 0 , 1년 약정 = 1, 2년 약정 = 2, 3년 약정 = 3)
-                  example: 1
+                  description: 사용 고객수 
       responses:
         '200':
           description: redirect되지 않을 경우 상세 실패 사유와 함께 응답 회신 
@@ -95,10 +86,9 @@ paths:
                 memSq:
                   type: string
                   description: 고객 식별정보
-                licenseCd:
+                licenseCount:
                   type: integer
-                  description: 라이선스 구분(무약정 = 0 , 1년 약정 = 1, 2년 약정 = 2, 3년 약정 = 3)
-                  example: 1
+                  description: 고객 수 
       responses:
         '200':
           description: 서비스 변경 결과 전송 
@@ -116,12 +106,12 @@ paths:
                     properties:
                       subject:
                         type: string
-                        description: "변경하는 대상"
+                        description: "변경 대상"
                         example: "라이선스 수"
                       description:
                         type: string
                         description: "변경내용"
-                        example: "무약정에서 약정으로 변경"
+                        example: "3명에서 5명으로 변경"
         default:
           $ref: '#/components/responses'
     delete:
@@ -207,71 +197,7 @@ paths:
                     - '2022년 1월 20일 생성된 도메인과 중복됩니다.'
                     - '중복값이 아닙니다. 사용해도 좋습니다.'
         default:
-          $ref: '#/components/responses'
-  /bill-management/{bill-day}/bill-list:
-    get:
-      description: 연동 시스템에서 보유한 특정 일 곧 {bill-day}까지 과금했을 때의 요금을 회신합니다. 
-      tags:
-        - get-billinfo-day
-      parameters:
-        - name: TIME_STAMP
-          in: header
-          required: true
-          schema:
-            type: string
-            format: YYYYMMDDhhmmss
-            example: 2022062114810
-        - name: billDay
-          in: path
-          description: 조회하고 싶은 일자를 의미합니다.(해당 일의 요금 정보를 회신. 월 1일부터 해당 일까지 일할 계산)
-          required: true
-          schema:
-            type: string
-            format: "yyyy-mm-dd"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Bills"
-        default:
-          $ref: '#/components/responses'
-  /bill-management/customers/{mem-sq}/bill-list:
-    get:
-      description: 특정 고객에 대한 가입일부터 billDay까지의 각 일별로 라이선스 정보를 회신합니다. 
-      tags:
-        - get-billinfo
-      parameters:
-        - name: TIME_STAMP
-          in: header
-          required: true
-          schema:
-            type: string
-            format: YYYYMMDDhhmmss
-            example: 2022062114810
-        - name: memSq 
-          in: path
-          description: KT Cloud가 보유하고 있는 고유의 고객 식별자
-          required: true
-          schema:
-            type: string
-        - name: billDay
-          in : query
-          description: 조회하고 싶은 월을 의미합니다.
-          required: true
-          schema:
-            type: string
-            format: "yyyy-mm-dd"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Usage"
-        default:
-          $ref: '#/components/responses'             
+          $ref: '#/components/responses'          
 components:
   responses:
     '200':
@@ -295,38 +221,3 @@ components:
       type: apiKey
       in: header
       name: X_API_KEY
-  schemas:
-    Bills:
-      type: array
-      items:
-        $ref: '#components/schemas/Bill'
-    Bill:
-      required:
-        - billDay
-        - memSq
-        - licenseCount
-      properties:
-        billDay:
-          type: string
-          format: "yyyy-mm-dd"
-        memSq:
-          type: string
-          format: UTF-8
-        license-count:
-          type: string
-          description: 해당 일자까지 요금 계산할 때의 license count로 1일에 5 license 2일에 6 license 사용시 다음날 전날 데이터 조회시 ⌈5+6/2⌉로 표시 
-    Usage:
-      required:
-        - billDay
-        - memSq
-        - licenseCount
-      properties:
-        billDay:
-          type: string 
-          format: "yyyy-mm-dd"
-        memSq:
-          type: string 
-          format: UTF-8
-        licenseCount:
-          type: string 
-          description: 해당 일자에 등록한 라이선스'
